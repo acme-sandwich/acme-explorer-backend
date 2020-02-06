@@ -68,7 +68,7 @@ var TripSchema = new Schema({
     stages: [StageSchema],
     creator:{ // The Actor creator must have manager as role.
         type: Schema.Types.ObjectId,
-        ref: 'Actor'
+        ref: 'Actors'
     },
     created: {
         type: Date,
