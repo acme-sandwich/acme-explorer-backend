@@ -8,10 +8,12 @@ var express = require('express'),
   bodyParser = require('body-parser');
 
 // MongoDB URI building
-var mongoDBHostname = process.env.mongoDBHostname || "localhost";
-var mongoDBPort = process.env.mongoDBPort || "27017";
-var mongoDBName = process.env.mongoDBName || "ACME-Market";
-var mongoDBURI = "mongodb://" + mongoDBHostname + ":" + mongoDBPort + "/" + mongoDBName;
+const SERVER = 'acme-explorer-xlwrw.mongodb.net';
+const DATABASE = 'ACME-Explorer';
+const DB_USER = 'acme-sandwich';
+const PASSWORD = 'acme-sandwich';
+
+mongoDBURI = `mongodb+srv://${DB_USER}:${PASSWORD}@${SERVER}/${DATABASE}`;
 
 mongoose.connect(mongoDBURI, {
     reconnectTries: 10,
