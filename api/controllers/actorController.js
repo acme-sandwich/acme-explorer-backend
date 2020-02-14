@@ -9,7 +9,6 @@ exports.list_all_actors = function(req, res) {
           res.send(err);
         }
         else{
-          console.log(actors);
             res.json(actors);
         }
     });
@@ -17,9 +16,11 @@ exports.list_all_actors = function(req, res) {
 
 exports.create_an_actor = function(req, res) {
   var new_actor = new Actor(req.body);
+  console.log(new_actor);
   new_actor.save(function(err, actor) {
     if (err){
       res.send(err);
+      console.log(err);
     }
     else{
       res.json(actor);
@@ -40,6 +41,7 @@ exports.read_an_actor = function(req, res) {
 
 exports.update_an_actor = function(req, res) {
     Actor.findOneAndUpdate({_id: req.params.actorId}, req.body, {new: true}, function(err, actor) {
+      console.log(req.params.actorId);
         if (err){
             res.send(err);
         }
