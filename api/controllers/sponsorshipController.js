@@ -37,6 +37,17 @@ exports.read_a_sponsorship = function(req, res) {
   });
 };
 
+exports.pay_a_sponsorship = function(req, res) {
+  Sponsorship.findOneAndUpdate({_id: req.params.sponsorshipId},  { $set: {"payed": "true" }}, {new: true}, function(err, sponsorship) {
+    if (err){
+      res.status(500).send(err);
+    }
+    else{
+      res.json(sponsorship);
+    }
+  });
+};
+
 exports.update_a_sponsorship = function(req, res) {
     Sponsorship.findOneAndUpdate({_id: req.params.sponsorshipId}, req.body, {new: true}, function(err, sponsorship) {
         if (err){

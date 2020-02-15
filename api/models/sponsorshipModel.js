@@ -7,17 +7,13 @@ var SponsorshipSchema = new Schema({
     data: Buffer,
     contentType: String
   },
-  link: {
+  landingPage: {
     type: String,
     required: true
   },
-  paid: {
+  payed: {
     type: Boolean,
     default: false
-  },
-  created: {
-    type: Date,
-    default: Date.now
   }
 }, { strict: false });
 
