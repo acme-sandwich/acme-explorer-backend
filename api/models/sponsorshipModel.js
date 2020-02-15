@@ -5,7 +5,8 @@ var Schema = mongoose.Schema;
 var SponsorshipSchema = new Schema({
   banner: {
     data: Buffer,
-    contentType: String
+    contentType: String,
+    required: true
   },
   landingPage: {
     type: String,
