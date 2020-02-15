@@ -8,6 +8,9 @@ module.exports = function(app) {
 
   app.route('/sponsorships/:sponsorshipId')
     .get(sponsorships.read_a_sponsorship)
-	  .put(sponsorships.update_a_sponsorship)
+    .put(sponsorships.update_a_sponsorship)
     .delete(sponsorships.delete_a_sponsorship);
+  
+  app.route('/sponsorships/:sponsorshipId/pay')
+    .put(sponsorships.pay_a_sponsorship);
 };
