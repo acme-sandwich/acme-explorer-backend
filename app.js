@@ -5,12 +5,13 @@ var express = require('express'),
   Actor = require('./api/models/actorModel'),
   Item = require('./api/models/itemModel'),
   Order = require('./api/models/orderModel'),
+  Finder = require('./api/models/finderModel');
   bodyParser = require('body-parser');
 
 // MongoDB URI building
 var mongoDBHostname = process.env.mongoDBHostname || "localhost";
 var mongoDBPort = process.env.mongoDBPort || "27017";
-var mongoDBName = process.env.mongoDBName || "ACME-Market";
+var mongoDBName = process.env.mongoDBName || "ACME-Explorer";
 var mongoDBURI = "mongodb://" + mongoDBHostname + ":" + mongoDBPort + "/" + mongoDBName;
 
 mongoose.connect(mongoDBURI, {
@@ -29,17 +30,19 @@ app.use(bodyParser.json());
 var routesActors = require('./api/routes/actorRoutes');
 var routesItems = require('./api/routes/itemRoutes'); 
 var routesOrders = require('./api/routes/orderRoutes');
+var routesFinder = require('./api/routes/finderRoutes');
 
 
 routesActors(app);
 routesItems(app);
 routesOrders(app);
+routesFinder(app);
 
 
 console.log("Connecting DB to: " + mongoDBURI);
 mongoose.connection.on("open", function (err, conn) {
     app.listen(port, function () {
-        console.log('ACME-Market RESTful API server started on: ' + port);
+        console.log('ACME-Explorer RESTful API server started on: ' + port);
     });
 });
 
