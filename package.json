@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/acme-sandwich/acme-explorer-backend#readme",
   "dependencies": {
+    "bcrypt": "^3.0.8",
     "express": "^4.17.1",
     "mongoose": "^5.8.11",
     "nanoid": "^2.1.11"

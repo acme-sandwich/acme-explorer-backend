@@ -6,6 +6,7 @@ var express = require('express'),
   Finder = require('./api/models/finderModel');
   Sponsorship = require('./api/models/sponsorshipModel');
   Trip = require('./api/models/tripModel'),
+  Application = require('./api/models/applicationModel');
   bodyParser = require('body-parser');
 
 // MongoDB URI building
@@ -34,12 +35,14 @@ var routesActors = require('./api/routes/actorRoutes');
 var routesTrips = require('./api/routes/tripRoutes'); 
 var routesFinder = require('./api/routes/finderRoutes');
 var routesSponsorship = require('./api/routes/sponsorshipRoutes');
+var routesApplications = require('./api/routes/applicationRoutes');
 
 
 routesActors(app);
 routesTrips(app);
 routesFinder(app);
 routesSponsorship(app);
+routesApplications(app);
 
 
 console.log("Connecting DB to: " + mongoDBURI);
