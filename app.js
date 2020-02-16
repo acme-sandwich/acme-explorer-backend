@@ -3,10 +3,11 @@ var express = require('express'),
   port = process.env.PORT || 8080,
   mongoose = require('mongoose'),
   Actor = require('./api/models/actorModel'),
-  Finder = require('./api/models/finderModel');
-  Sponsorship = require('./api/models/sponsorshipModel');
+  Finder = require('./api/models/finderModel'),
+  Sponsorship = require('./api/models/sponsorshipModel'),
   Trip = require('./api/models/tripModel'),
-  Application = require('./api/models/applicationModel');
+  Application = require('./api/models/applicationModel'),
+  Configuration = require('./api/models/configurationModel'),
   bodyParser = require('body-parser');
 
 // MongoDB URI building
@@ -36,6 +37,7 @@ var routesTrips = require('./api/routes/tripRoutes');
 var routesFinder = require('./api/routes/finderRoutes');
 var routesSponsorship = require('./api/routes/sponsorshipRoutes');
 var routesApplications = require('./api/routes/applicationRoutes');
+var routesConfigurations = require('./api/routes/configurationRoutes');
 
 
 routesActors(app);
@@ -43,6 +45,7 @@ routesTrips(app);
 routesFinder(app);
 routesSponsorship(app);
 routesApplications(app);
+routesConfigurations(app);
 
 
 console.log("Connecting DB to: " + mongoDBURI);
