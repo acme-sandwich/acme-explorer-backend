@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/acme-sandwich/acme-explorer-backend.git"
   },
-  "author": "afdez@us.es, cmuller@us.es",
+  "author": "Antonio Rodríguez Artacho, Jorge Gordo Aguilar y Rafael Fresno Aranda",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/acme-sandwich/acme-explorer-backend/issues"
@@ -19,6 +19,7 @@
   "homepage": "https://github.com/acme-sandwich/acme-explorer-backend#readme",
   "dependencies": {
     "express": "^4.17.1",
-    "mongoose": "^5.8.11"
+    "mongoose": "^5.8.11",
+    "nanoid": "^2.1.11"
   }
 }

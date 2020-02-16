@@ -3,8 +3,7 @@ var express = require('express'),
   port = process.env.PORT || 8080,
   mongoose = require('mongoose'),
   Actor = require('./api/models/actorModel'),
-  Item = require('./api/models/itemModel'),
-  Order = require('./api/models/orderModel'),
+  Trip = require('./api/models/tripModel'),
   bodyParser = require('body-parser');
 
 // MongoDB URI building
@@ -20,19 +19,20 @@ mongoose.connect(mongoDBURI, {
     connectTimeoutMS: 10000, // Give up initial connection after 10 seconds
     socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
     family: 4, // skip trying IPv6
-    useNewUrlParser: true
+    useNewUrlParser: true,
+    useFindAndModify: false
 });
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 var routesActors = require('./api/routes/actorRoutes');
-var routesItems = require('./api/routes/itemRoutes'); 
+var routesTrips = require('./api/routes/itemRoutes'); 
 var routesOrders = require('./api/routes/orderRoutes');
 
 
 routesActors(app);
-routesItems(app);
+routesTrips(app);
 routesOrders(app);
 
 
