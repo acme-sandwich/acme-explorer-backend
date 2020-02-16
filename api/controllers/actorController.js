@@ -9,6 +9,7 @@ exports.list_all_actors = function(req, res) {
           res.send(err);
         }
         else{
+          console.log(actors);
             res.json(actors);
         }
     });
