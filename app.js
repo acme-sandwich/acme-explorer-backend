@@ -11,12 +11,13 @@ var express = require('express'),
   bodyParser = require('body-parser');
 
 // MongoDB URI building
-const SERVER = 'acme-explorer-xlwrw.mongodb.net';
-const DATABASE = 'ACME-Explorer';
-const DB_USER = 'acme-sandwich';
-const PASSWORD = 'acme-sandwich';
+const mongoDBHostname = process.env.mongoDBHostname || 'acme-explorer-xlwrw.mongodb.net';
+const mongoDBName = process.env.mongoDBName || 'ACME-Explorer';
+const mongoDBUser = process.env.mongoDBUser || 'db-user';
+const mongoDBPass = process.env.mongoDBPass || 'db-user';
+const mongoDBPort = process.env.mongoDBPort || "27017"; // Not used in Mongo Atlas
 
-mongoDBURI = `mongodb+srv://${DB_USER}:${PASSWORD}@${SERVER}/${DATABASE}`;
+mongoDBURI = `mongodb+srv://${mongoDBUser}:${mongoDBPass}@${mongoDBHostname}:/${mongoDBName}`;
 
 mongoose.connect(mongoDBURI, {
     reconnectTries: 10,
@@ -38,6 +39,7 @@ var routesFinder = require('./api/routes/finderRoutes');
 var routesSponsorship = require('./api/routes/sponsorshipRoutes');
 var routesApplications = require('./api/routes/applicationRoutes');
 var routesConfigurations = require('./api/routes/configurationRoutes');
+var routesStorage = require('./api/routes/storageRoutes');
 
 
 routesActors(app);
@@ -46,6 +48,7 @@ routesFinder(app);
 routesSponsorship(app);
 routesApplications(app);
 routesConfigurations(app);
+routesStorage(app);
 
 
 console.log("Connecting DB to: " + mongoDBURI);

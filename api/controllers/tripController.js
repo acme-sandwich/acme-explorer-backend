@@ -15,12 +15,15 @@ exports.list_all_trips = function (req, res) {
 };
 
 exports.create_a_trip = function(req, res) {
+  console.log('Estoy en el create de trip');
     var new_trip = new Trip(req.body);
     new_trip.save(function(err, trip) {
+      console.log("Errpr: "+ err);
       if (err){
         res.send(err);
       }
       else{
+        console.log(trip);
         res.json(trip);
       }
     });

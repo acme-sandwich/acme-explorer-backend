@@ -97,6 +97,7 @@ var TripSchema = new Schema({
 }, { strict: false });
 
 TripSchema.pre('save', function(callback) {
+    console.log('Estoy en el pre del save');
     var new_trip = this;
     var today = new Date();
     var month = '' + (today.getMonth() + 1);
@@ -107,9 +108,9 @@ TripSchema.pre('save', function(callback) {
         month = '0' + month;
     if (day.length < 2) 
         day = '0' + day;
-    today_string = year + month + day;
-    random_generation = generate('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 4);
-    new_trip.ticker = today_string + random_generation;
+    var today_string = year + month + day;
+    var random_generation = generate('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 4);
+    new_trip.ticker = today_string + "-" + random_generation;
     callback();
   });
 
