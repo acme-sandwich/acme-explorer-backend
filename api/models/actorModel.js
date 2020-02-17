@@ -31,7 +31,7 @@ var ActorSchema = new Schema({
   role: [{
     type: String,
     required: 'Kindly enter the user role(s)',
-    enum: ['Administrator', 'Manager', 'Explorer', 'Sponsor']
+    enum: ['ADMINISTRATOR', 'MANAGER', 'EXPLORER', 'SPONSOR']
   }],
   banned:{
     type: Boolean,
@@ -39,21 +39,34 @@ var ActorSchema = new Schema({
   }
 }, { strict: false });
 
-ActorSchema.pre('save', function(callback) {
-  var actor = this;
-  // Break out if the password hasn't changed
-  if (!actor.isModified('password')) return callback();
-
-  // Password changed so we need to hash it
-  bcrypt.genSalt(5, function(err, salt) {
-    if (err) return callback(err);
-
-    bcrypt.hash(actor.password, salt, function(err, hash) {
-      if (err) return callback(err);
-      actor.password = hash;
-      callback();
-    });
+var hashPassword = function (password) {
+  return new Promise(function (resolve, reject) {
+    if (password) {
+      var salt = bcrypt.genSaltSync(5);
+      var hash = bcrypt.hashSync(password, salt);
+      resolve(hash);
+    } else {
+      var error = new Error('Password needed');
+      reject(error);
+    }
   });
+};
+
+ActorSchema.pre('save', async function (callback) {
+  var actor = this;
+  hashPassword(actor.password).then(function (myhash) {
+    actor.password = myhash;
+    callback();
+  })
+});
+
+ActorSchema.pre("findOneAndUpdate", async function (callback) {
+  var actor = this;
+  var password = this.getUpdate().password;
+  hashPassword(password).then(function (myhash) {
+    actor.update({ password: myhash })
+    callback();
+  })
 });
 
 ActorSchema.methods.verifyPassword = function(password, cb) {

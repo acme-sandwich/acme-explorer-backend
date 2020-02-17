@@ -36,15 +36,19 @@ var FinderSchema = new Schema({
   moment: {
     type: Date,
     default: Date.now
-  }
+  },
+  explorer:{
+    type: Schema.Types.ObjectId,
+    ref: 'Actors'
+}
 }, { strict: false });
 
 function priceValidator(value) {
-  return this.priceUp <= value;
+  return this.priceDown == null || this.priceUp <= value;
 }
 
 function dateValidator(value) {
-  return this.dateStart <= value;
+  return this.dateEnd == null || this.dateStart <= value;
 }
 
 module.exports = mongoose.model('Finders', FinderSchema);
