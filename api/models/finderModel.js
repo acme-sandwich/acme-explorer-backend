@@ -40,11 +40,11 @@ var FinderSchema = new Schema({
 }, { strict: false });
 
 function priceValidator(value) {
-  return this.priceUp <= value;
+  return this.priceDown == null || this.priceUp <= value;
 }
 
 function dateValidator(value) {
-  return this.dateStart <= value;
+  return this.dateEnd == null || this.dateStart <= value;
 }
 
 module.exports = mongoose.model('Finders', FinderSchema);
