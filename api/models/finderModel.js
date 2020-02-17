@@ -36,7 +36,11 @@ var FinderSchema = new Schema({
   moment: {
     type: Date,
     default: Date.now
-  }
+  },
+  explorer:{
+    type: Schema.Types.ObjectId,
+    ref: 'Actors'
+}
 }, { strict: false });
 
 function priceValidator(value) {
