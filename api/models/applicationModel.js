@@ -10,14 +10,17 @@ var ApplicationSchema = new Schema({
   },
   status: {
     type: String,
-    required: 'Kindly enter the application status',
-    enum: ['PENDING', 'REJECTED', 'DUE', 'ACCEPTED', 'CANCELLED']
+    enum: ['PENDING', 'REJECTED', 'DUE', 'ACCEPTED', 'CANCELLED'],
+    default: 'PENDING'
   },
   comment: {
     type: String,
   },
   reason: {
     type: String,
+    required: function(){
+      return this.status === 'REJECTED'; // En caso de que un manager te rechace la reason es obligatoria
+    }
   },
   trip: {
     type: Schema.Types.ObjectId,
@@ -29,9 +32,9 @@ var ApplicationSchema = new Schema({
   }
 }, { strict: false });
 
+ApplicationSchema.index({status: 'text'});
 ApplicationSchema.index({moment: 1});
 ApplicationSchema.index({trip: 1})
-ApplicationSchema.index({explorer: 1});
-ApplicationSchema.index({explorer: 1, status: 'text'});
+ApplicationSchema.index({explorer: 1, status: 1});
 
 module.exports = mongoose.model('Applications', ApplicationSchema);
