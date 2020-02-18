@@ -39,6 +39,20 @@ exports.generate_mocker_data = function(req, res){
         }
     };
 
+    var stage = {
+        title:{
+            function: function(){
+                return this.faker.address.country() + " " + this.faker.commerce.product();
+            }
+        },
+        description: {
+            faker: 'lorem.paragraph'
+        },
+        price: {
+            faker: 'random.number({"min": 1, "max": 17})'
+        }
+    };
+
     var trip = {
         title:{
             function: function(){
@@ -48,9 +62,20 @@ exports.generate_mocker_data = function(req, res){
         description: {
             faker: 'lorem.paragraph'
         },
+        stages: {
+            hasMany: 'stages',
+            min: 1,
+            max: 5,
+            unique: true
+        },
         price:{
              function: function(){
-                return 0;
+                var stages = this.object.stages;
+                var price = 0;
+                for(var i = 0; i < stages.length; i++){
+                    price = price + stages[i].price;
+                }
+
              }
         },
         requirements: {
@@ -108,4 +133,5 @@ exports.generate_mocker_data = function(req, res){
     mocker()
     .schema('actors', actor, 5)
     .schema('trips', trip, 3)
+    .schema('stages', stage, 3)
 };
