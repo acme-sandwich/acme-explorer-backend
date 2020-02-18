@@ -39,6 +39,9 @@ var ActorSchema = new Schema({
   }
 }, { strict: false });
 
+ActorSchema.index({banned: 1});
+ActorSchema.index({role: 'text'});
+
 var hashPassword = function (password) {
   return new Promise(function (resolve, reject) {
     if (password) {

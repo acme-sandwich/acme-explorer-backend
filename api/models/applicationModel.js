@@ -29,4 +29,9 @@ var ApplicationSchema = new Schema({
   }
 }, { strict: false });
 
+ApplicationSchema.index({moment: 1});
+ApplicationSchema.index({trip: 1})
+ApplicationSchema.index({explorer: 1});
+ApplicationSchema.index({explorer: 1, status: 'text'});
+
 module.exports = mongoose.model('Applications', ApplicationSchema);

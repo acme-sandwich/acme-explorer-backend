@@ -10,8 +10,8 @@ var ConfigurationSchema = new Schema({
     },
     resultsTimeFinder: {
         type: Number,
-        required: 'Kindly enter the time of the results of the finder',
-        min:10, max:24
+        min:1, max:24,
+        default: 1
       },
     sponsorshipRate: {
       type: Number,
