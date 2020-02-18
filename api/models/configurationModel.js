@@ -5,8 +5,8 @@ var Schema = mongoose.Schema;
 var ConfigurationSchema = new Schema({
     resultsNumberFinder: {
       type: Number,
-      required: 'Kindly enter the results of the finder',
-      min:10, max:100
+      min:10, max:100,
+      default: 10
     },
     resultsTimeFinder: {
         type: Number,
