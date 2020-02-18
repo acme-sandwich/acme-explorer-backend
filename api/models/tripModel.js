@@ -96,6 +96,12 @@ var TripSchema = new Schema({
     }
 }, { strict: false });
 
+TripSchema.index({creator: 1});
+TripSchema.index({deleted: 1});
+TripSchema.index({title: 'text', description: 'text', ticker: 'text'});
+TripSchema.index({price: 1});
+
+
 TripSchema.pre('save', function(callback) {
     console.log('Estoy en el pre del save');
     var new_trip = this;

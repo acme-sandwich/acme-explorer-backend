@@ -1,9 +1,10 @@
 'use strict';
 var mocker = require('mocker-data-generator').default;
 var mongoose = require('mongoose');
+var util = require('util');
 
 exports.generate_mocker_data = function(req, res){
-    var actor = {
+    var explorer = {
         id: {
             function: function(){
                 return mongoose.Types.ObjectId();
@@ -30,7 +31,123 @@ exports.generate_mocker_data = function(req, res){
             faker: 'address.streetAddress'
         },
         role: {
-            randexp: /ADMINISTRATOR|EXPLORER|MANAGER|SPONSOR/
+            function: function(){
+                return "EXPLORER";
+             }
+        },
+        banned: {
+            function: function(){
+                return false;
+             }
+        }
+    };
+
+    var manager = {
+        id: {
+            function: function(){
+                return mongoose.Types.ObjectId();
+             }
+        },
+        name: {
+            faker: 'name.firstName'
+        },
+        surname: {
+            faker: 'name.lastName'
+        },
+        email: {
+            faker: 'internet.email'
+        },
+        password: {
+            function: function(){
+                return "password1234";
+             }
+        },
+        phone: {
+            faker: 'phone.phoneNumber'
+        },
+        address:{
+            faker: 'address.streetAddress'
+        },
+        role: {
+            function: function(){
+                return "MANAGER";
+             }
+        },
+        banned: {
+            function: function(){
+                return false;
+             }
+        }
+    };
+
+    var administrator = {
+        id: {
+            function: function(){
+                return mongoose.Types.ObjectId();
+             }
+        },
+        name: {
+            faker: 'name.firstName'
+        },
+        surname: {
+            faker: 'name.lastName'
+        },
+        email: {
+            faker: 'internet.email'
+        },
+        password: {
+            function: function(){
+                return "password1234";
+             }
+        },
+        phone: {
+            faker: 'phone.phoneNumber'
+        },
+        address:{
+            faker: 'address.streetAddress'
+        },
+        role: {
+            function: function(){
+                return "ADMINISTRATOR";
+             }
+        },
+        banned: {
+            function: function(){
+                return false;
+             }
+        }
+    };
+
+    var sponsor = {
+        id: {
+            function: function(){
+                return mongoose.Types.ObjectId();
+             }
+        },
+        name: {
+            faker: 'name.firstName'
+        },
+        surname: {
+            faker: 'name.lastName'
+        },
+        email: {
+            faker: 'internet.email'
+        },
+        password: {
+            function: function(){
+                return "password1234";
+             }
+        },
+        phone: {
+            faker: 'phone.phoneNumber'
+        },
+        address:{
+            faker: 'address.streetAddress'
+        },
+        role: {
+            function: function(){
+                return "SPONSOR";
+             }
         },
         banned: {
             function: function(){
@@ -49,11 +166,16 @@ exports.generate_mocker_data = function(req, res){
             faker: 'lorem.paragraph'
         },
         price: {
-            faker: 'random.number({"min": 1, "max": 17})'
+            faker: 'random.number({"min": 1, "max": 100})'
         }
     };
 
     var trip = {
+        id: {
+            function: function(){
+                return mongoose.Types.ObjectId();
+             }
+        },
         title:{
             function: function(){
                 return this.faker.address.country() + " " + this.faker.commerce.product();
@@ -75,6 +197,8 @@ exports.generate_mocker_data = function(req, res){
                 for(var i = 0; i < stages.length; i++){
                     price = price + stages[i].price;
                 }
+
+                return price;
 
              }
         },
@@ -113,7 +237,7 @@ exports.generate_mocker_data = function(req, res){
             }
         },
         creator: {
-            hasOne: 'actors',
+            hasOne: 'managers',
             get: 'id'
         },
         created: {
@@ -130,8 +254,51 @@ exports.generate_mocker_data = function(req, res){
         }
     };
 
+    var application = {
+        trip: {
+            hasOne: 'trips',
+            get: 'id'
+        },
+        explorer: {
+            hasOne: 'explorers',
+            get: 'id'
+        },
+        moment: {
+            function: function(){
+                var dateTripCreation = this.object.trip.created;
+                var dateStartTrip = this.object.trip.startDate;
+                return this.faker.date.between(dateTripCreation, dateStartTrip);
+            }
+        },
+        status: {
+            randexp: /PENDING|REJECTED|DUE|ACCEPTED|CANCELLED/
+        },
+        comment: {
+            faker: 'lorem.paragraph'
+        },
+        reason: {
+            function: function(){
+                if(this.object.status === "REJECTED"){
+                    return "Rechazado por exceso de participantes";
+                }
+            }
+        }
+    }
+
     mocker()
-    .schema('actors', actor, 5)
-    .schema('trips', trip, 3)
-    .schema('stages', stage, 3)
+    .schema('explorers', explorer, 5)
+    .schema('managers', manager, 5)
+    .schema('administrators', administrator, 5)
+    .schema('sponsors', sponsor, 5)
+    .schema('stages', stage, 50)
+    .schema('trips', trip, 8)
+    .schema('applications',application, 5)
+    .build(function(err, data) {
+        if(err){
+            res.send(err);
+        }else{
+            res.json(data);
+        }
+    });
+    
 };

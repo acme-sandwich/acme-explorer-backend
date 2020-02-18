@@ -1,6 +1,7 @@
 'use strict';
 module.exports = function(app) {
 	var storage = require('../controllers/storageController');
+	var mockerDataGenerator = require('../controllers/mockerDataGenerator');
 
   // Data Storage routes
 
@@ -34,4 +35,7 @@ module.exports = function(app) {
   */
   app.route('/v1/storage/fs')
 		.post(storage.store_json_fs);
+
+	app.route('/v1/mocker-data-generator')
+	.post(mockerDataGenerator.generate_mocker_data);
 };
