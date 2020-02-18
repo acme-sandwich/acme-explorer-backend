@@ -20,6 +20,7 @@
   "dependencies": {
     "bcrypt": "^3.0.8",
     "express": "^4.17.1",
+    "mocker-data-generator": "^2.6.6",
     "mongoose": "^5.8.11",
     "nanoid": "^2.1.11",
     "stream-to-mongo-db": "^1.6.0"
