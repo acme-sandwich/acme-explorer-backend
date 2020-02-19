@@ -7,12 +7,12 @@ var FinderSchema = new Schema({
     type: String,
     default: null
   },
-  priceUp: {
+  maxPrice: {
     type: Number,
     default: null,
     min: 0
   },
-  priceDown: {
+  minPrice: {
     type: Number,
     default: null,
     min: 0,
