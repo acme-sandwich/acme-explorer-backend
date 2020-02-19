@@ -283,6 +283,89 @@ exports.generate_mocker_data = function(req, res){
                 }
             }
         }
+    };
+
+    var sponsorship = {
+        sponsor: {
+            hasOne: 'sponsors',
+            get: 'id'
+        },
+        trips: {
+            hasMany: 'trips',
+            min: 0,
+            max: 3,
+            unique: true,
+            get: 'id'
+        },
+        image: {
+            function: function(){
+                return "https://image.shutterstock.com/image-vector/blue-thunder-on-purple-pink-260nw-1524614582.jpg"; 
+            }
+        },
+        landingPage: {
+            faker: 'internet.url'
+        },
+        payed: {
+            faker: 'random.boolean'
+        }
+    };
+
+    var finder = {
+        explorer: {
+            hasOne: 'explorers',
+            get: 'id',
+            unique: true
+        },
+        trips: {
+            hasMany: 'trips',
+            min: 0,
+            max: 10,
+            unique: true,
+            get: 'id'
+        },
+        defaultFinder:{
+            faker: 'random.boolean',
+            virtual: true
+        }, 
+        keyword: {
+            function: function(){
+                if(!this.object.defaultFinder){
+                    return this.faker.lorem.word();
+                }
+            }
+        },
+        minPrice: {
+            function: function(){
+                if(!this.object.defaultFinder){
+                    return this.faker.random.number({'min':1, 'max':50});
+                }
+            }
+        },
+        maxPrice: {
+            function: function(){
+                if(!this.object.defaultFinder){
+                    return this.faker.random.number({'min':50, 'max':300});
+                }
+            }
+        },
+        dateStart: {
+            function: function(){
+                var date = this.faker.date.between("2019-12-30", "2020-02-01");
+                return date;
+            }
+        },
+        dateEnd: {
+            function: function(){
+                var date = this.faker.date.between("2020-02-01", "2020-06-10");
+                return date;
+            }
+        },
+        moment: {
+            function: function(){
+                var date = this.faker.date.between("2020-01-01", "2020-02-01");
+                return date;
+            }
+        }
     }
 
     mocker()
@@ -291,8 +374,10 @@ exports.generate_mocker_data = function(req, res){
     .schema('administrators', administrator, 5)
     .schema('sponsors', sponsor, 5)
     .schema('stages', stage, 50)
-    .schema('trips', trip, 8)
+    .schema('trips', trip, 15)
     .schema('applications',application, 5)
+    .schema('sponsorships',sponsorship, 5)
+    .schema('finders',finder, 5)
     .build(function(err, data) {
         if(err){
             res.send(err);
