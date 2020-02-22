@@ -297,7 +297,14 @@ exports.generate_mocker_data = function(req, res){
         if(err){
             res.send(err);
         }else{
-            res.json(data);
+            var explorers_json = data.explorers;
+            var mamangers_json = data.managers;
+            var administrators_json = data.administrators_json;
+            var sponsors_json = data.sponsors;
+            var stages_json = data.stages;
+            var trips_json = data.trips;
+            var applications_json = data.applications;
+            
         }
     });
     
