@@ -2,6 +2,12 @@
 var mocker = require('mocker-data-generator').default;
 var mongoose = require('mongoose');
 var util = require('util');
+var ActorModel = mongoose.model('Actors');
+var TripModel = mongoose.model('Trips');
+var ApplicationModel = mongoose.model('Applications');
+var SponsorshipModel = mongoose.model('Sponsorships');
+var FinderModel = mongoose.model('Finders');
+
 
 exports.generate_mocker_data = function(req, res){
     var explorer = {
@@ -382,14 +388,111 @@ exports.generate_mocker_data = function(req, res){
         if(err){
             res.send(err);
         }else{
-            var explorers_json = data.explorers;
-            var mamangers_json = data.managers;
-            var administrators_json = data.administrators_json;
-            var sponsors_json = data.sponsors;
-            var stages_json = data.stages;
-            var trips_json = data.trips;
-            var applications_json = data.applications;
-            
+            var explorers = data.explorers;
+            var managers = data.managers;
+            var administrators = data.administrators_json;
+            var sponsors = data.sponsors;
+            var stages = data.stages;
+            var trips = data.trips;
+            var applications = data.applications;
+            var sponsorships = data.sponsorships;
+            var finders = data.finders;
+
+            for(var i = 0; i < explorers.length; i++){
+                var new_explorer = new ActorModel(explorers[i]);
+                new_explorer.save(function (err, exp) {
+                    if (err) {
+                        console.error("Error when trying to save explorer " + exp + ": " +err);
+                    }
+                    else {
+                        console.log("Explorer properly created");
+                    }
+                });
+            }
+
+            for(var i = 0; i < managers.length; i++){
+                var new_manager = new ActorModel(managers[i]);
+                new_manager.save(function (err, manag) {
+                    if (err) {
+                        console.error("Error when trying to save manager " + manag + ": " +err);
+                    }
+                    else {
+                        console.log("Manager properly created");
+                    }
+                });
+            }
+
+            for(var i = 0; i < administrators.length; i++){
+                var new_administrator = new ActorModel(administrators[i]);
+                new_administrator.save(function (err, adm) {
+                    if (err) {
+                        console.error("Error when trying to save admin " + adm + ": " +err);
+                    }
+                    else {
+                        console.log("Administrator properly created");
+                    }
+                });
+            }
+
+            for(var i = 0; i < sponsors.length; i++){
+                var new_sponsor = new ActorModel(sponsors[i]);
+                new_sponsor.save(function (err, spo) {
+                    if (err) {
+                        console.error("Error when trying to save sponsor " + spo + ": " +err);
+                    }
+                    else {
+                        console.log("Sponsor properly created");
+                    }
+                });
+            }
+
+            for(var i = 0; i < trips.length; i++){
+                var new_trip = new TripModel(trips[i]);
+                new_trip.save(function (err, tr) {
+                    if (err) {
+                        console.error("Error when trying to save trip " + tr + ": " +err);
+                    }
+                    else {
+                        console.log("Trip properly created");
+                    }
+                });
+            }
+
+            for(var i = 0; i < applications.length; i++){
+                var new_application = new ApplicationModel(applications[i]);
+                new_application.save(function (err, app) {
+                    if (err) {
+                        console.error("Error when trying to save application " + app + ": " +err);
+                    }
+                    else {
+                        console.log("Application properly created");
+                    }
+                });
+            }
+
+            for(var i = 0; i < sponsorships.length; i++){
+                var new_sponsorship = new SponsorshipModel(sponsorships[i]);
+                new_sponsorship.save(function (err, spshp) {
+                    if (err) {
+                        console.error("Error when trying to save sposorship " + spshp + ": " +err);
+                    }
+                    else {
+                        console.log("Sponsorship properly created");
+                    }
+                });
+            }
+
+            for(var i = 0; i < finders.length; i++){
+                var new_finder = new FinderModel(finders[i]);
+                new_finder.save(function (err, fndr) {
+                    if (err) {
+                        console.error("Error when trying to save finder " + fndr + ": " +err);
+                    }
+                    else {
+                        console.log("Finder properly created");
+                    }
+                });
+            }
         }
     });
     
