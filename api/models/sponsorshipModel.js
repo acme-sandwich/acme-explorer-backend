@@ -15,14 +15,14 @@ var SponsorshipSchema = new Schema({
     type: Boolean,
     default: false
   },
-  sponsor:{
+  sponsor: {
     type: Schema.Types.ObjectId,
     ref: 'Actors'
-},
-trips:[{
-  type: Schema.Types.ObjectId,
-  ref: 'Trips'
-}]
+  },
+  trips: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Trips'
+  }]
 }, { strict: false });
 
 
