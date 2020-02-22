@@ -62,10 +62,10 @@ var TripSchema = new Schema({
         type: Date,
         required: [dateValidator, 'Start Date must be less or equal than End Date']
     },
-    picture: [{
+    picture: {
         data: Buffer, 
-        contentType: String
-    }],
+        contentType: [String]
+    },
     published: {
         type: Boolean,
         default: false
@@ -98,12 +98,12 @@ var TripSchema = new Schema({
 
 TripSchema.index({creator: 1});
 TripSchema.index({deleted: 1});
+TripSchema.index({published: 1});
 TripSchema.index({title: 'text', description: 'text', ticker: 'text'});
 TripSchema.index({price: 1});
 
 
 TripSchema.pre('save', function(callback) {
-    console.log('Estoy en el pre del save');
     var new_trip = this;
     var today = new Date();
     var month = '' + (today.getMonth() + 1);
@@ -125,6 +125,3 @@ TripSchema.pre('save', function(callback) {
   }
 
 module.exports = mongoose.model('Trips', TripSchema);
-// Commented for now. Not sure if a new collection should be created for Stages, or if
-// they should be embeded inside Trips.
-//module.exports = mongoose.model('Stages', StageSchema);
