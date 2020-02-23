@@ -7,12 +7,12 @@ var FinderSchema = new Schema({
     type: String,
     default: null
   },
-  maxPrice: {
+  minPrice: {
     type: Number,
     default: null,
     min: 0
   },
-  minPrice: {
+  maxPrice: {
     type: Number,
     default: null,
     min: 0,
@@ -50,7 +50,7 @@ var FinderSchema = new Schema({
 FinderSchema.index({explorer: 1});
 
 function priceValidator(value) {
-  return this.priceDown == null || this.priceUp <= value;
+  return this.maxPrice == null || this.minPrice <= value;
 }
 
 function dateValidator(value) {
