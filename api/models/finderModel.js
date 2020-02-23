@@ -7,18 +7,18 @@ var FinderSchema = new Schema({
     type: String,
     default: null
   },
-  priceUp: {
+  maxPrice: {
     type: Number,
     default: null,
     min: 0
   },
-  priceDown: {
+  minPrice: {
     type: Number,
     default: null,
     min: 0,
     validate: [
       priceValidator,
-      'PriceUp must be lower than PriceDown'
+      'The minimum price must be lower than the max price'
     ]
   },
   dateStart: {
@@ -36,15 +36,19 @@ var FinderSchema = new Schema({
   moment: {
     type: Date,
     default: Date.now
+  },
+  explorer: {
+    type: Schema.Types.ObjectId,
+    ref: 'Actors'
   }
 }, { strict: false });
 
 function priceValidator(value) {
-  return this.priceUp <= value;
+  return this.priceDown == null || this.priceUp <= value;
 }
 
 function dateValidator(value) {
-  return this.dateStart <= value;
+  return this.dateEnd == null || this.dateStart <= value;
 }
 
 module.exports = mongoose.model('Finders', FinderSchema);

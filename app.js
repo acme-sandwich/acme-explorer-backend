@@ -3,16 +3,21 @@ var express = require('express'),
   port = process.env.PORT || 8080,
   mongoose = require('mongoose'),
   Actor = require('./api/models/actorModel'),
-  Item = require('./api/models/itemModel'),
-  Order = require('./api/models/orderModel'),
-  Finder = require('./api/models/finderModel');
+  Finder = require('./api/models/finderModel'),
+  Sponsorship = require('./api/models/sponsorshipModel'),
+  Trip = require('./api/models/tripModel'),
+  Application = require('./api/models/applicationModel'),
+  Configuration = require('./api/models/configurationModel'),
   bodyParser = require('body-parser');
 
 // MongoDB URI building
-var mongoDBHostname = process.env.mongoDBHostname || "localhost";
-var mongoDBPort = process.env.mongoDBPort || "27017";
-var mongoDBName = process.env.mongoDBName || "ACME-Explorer";
-var mongoDBURI = "mongodb://" + mongoDBHostname + ":" + mongoDBPort + "/" + mongoDBName;
+const mongoDBHostname = process.env.mongoDBHostname || 'acme-explorer-xlwrw.mongodb.net';
+const mongoDBName = process.env.mongoDBName || 'ACME-Explorer';
+const mongoDBUser = process.env.mongoDBUser || 'db-user';
+const mongoDBPass = process.env.mongoDBPass || 'db-user';
+const mongoDBPort = process.env.mongoDBPort || "27017"; // Not used in Mongo Atlas
+
+mongoDBURI = `mongodb+srv://${mongoDBUser}:${mongoDBPass}@${mongoDBHostname}:/${mongoDBName}`;
 
 mongoose.connect(mongoDBURI, {
     reconnectTries: 10,
@@ -21,22 +26,29 @@ mongoose.connect(mongoDBURI, {
     connectTimeoutMS: 10000, // Give up initial connection after 10 seconds
     socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
     family: 4, // skip trying IPv6
-    useNewUrlParser: true
+    useNewUrlParser: true,
+    useFindAndModify: false
 });
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 var routesActors = require('./api/routes/actorRoutes');
-var routesItems = require('./api/routes/itemRoutes'); 
-var routesOrders = require('./api/routes/orderRoutes');
+var routesTrips = require('./api/routes/tripRoutes'); 
 var routesFinder = require('./api/routes/finderRoutes');
+var routesSponsorship = require('./api/routes/sponsorshipRoutes');
+var routesApplications = require('./api/routes/applicationRoutes');
+var routesConfigurations = require('./api/routes/configurationRoutes');
+var routesStorage = require('./api/routes/storageRoutes');
 
 
 routesActors(app);
-routesItems(app);
-routesOrders(app);
+routesTrips(app);
 routesFinder(app);
+routesSponsorship(app);
+routesApplications(app);
+routesConfigurations(app);
+routesStorage(app);
 
 
 console.log("Connecting DB to: " + mongoDBURI);
