@@ -7,12 +7,12 @@ var FinderSchema = new Schema({
     type: String,
     default: null
   },
-  maxPrice: {
+  minPrice: {
     type: Number,
     default: null,
     min: 0
   },
-  minPrice: {
+  maxPrice: {
     type: Number,
     default: null,
     min: 0,
@@ -37,14 +37,20 @@ var FinderSchema = new Schema({
     type: Date,
     default: Date.now
   },
+  trips: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Trips'
+  }],
   explorer: {
     type: Schema.Types.ObjectId,
     ref: 'Actors'
   }
 }, { strict: false });
 
+FinderSchema.index({explorer: 1});
+
 function priceValidator(value) {
-  return this.priceDown == null || this.priceUp <= value;
+  return this.maxPrice == null || this.minPrice <= value;
 }
 
 function dateValidator(value) {
