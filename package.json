@@ -11,14 +11,18 @@
     "type": "git",
     "url": "git+https://github.com/acme-sandwich/acme-explorer-backend.git"
   },
-  "author": "afdez@us.es, cmuller@us.es",
+  "author": "Antonio Rodríguez Artacho, Jorge Gordo Aguilar y Rafael Fresno Aranda",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/acme-sandwich/acme-explorer-backend/issues"
   },
   "homepage": "https://github.com/acme-sandwich/acme-explorer-backend#readme",
   "dependencies": {
+    "bcrypt": "^3.0.8",
     "express": "^4.17.1",
-    "mongoose": "^5.8.11"
+    "mocker-data-generator": "^2.6.6",
+    "mongoose": "^5.8.11",
+    "nanoid": "^2.1.11",
+    "stream-to-mongo-db": "^1.6.0"
   }
 }
