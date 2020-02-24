@@ -1,6 +1,6 @@
 'use strict';
 module.exports = function (app) {
-    var dashboard = require('../controllers/tripController');
+    var dashboard = require('../controllers/dashboardController');
 
     app.route('/v1/dashboard') // Returns all the dashboard metrics present in the requirements document.
         .get(dashboard.dashboard_info)
