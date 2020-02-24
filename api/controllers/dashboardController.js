@@ -32,10 +32,10 @@ function tripsPerManager(callback){
         }, {
             $group: {
                 _id: null,
-                avgManagerTrips: { $avg: "$countTrips" },
-                maxManagerTrips: { $max: "$countTrips" },
-                minManagerTrips: { $min: "$countTrips" },                
-                stdDevManagerTrips: { $stdDevPop: "$countTrips" }
+                avgManagerTrips: { $avg: "$tripCount" },
+                maxManagerTrips: { $max: "$tripCount" },
+                minManagerTrips: { $min: "$tripCount" },                
+                stdDevManagerTrips: { $stdDevPop: "$tripCount" }
             }
         },{
             $project: {
@@ -50,3 +50,58 @@ function tripsPerManager(callback){
         callback(err, res[0]);
     });
 };
+
+//The average, the minimum, the maximum, and the standard deviation of the number of applications per trip.
+function applicationsPerTrip(callback){
+    Application.aggregate([
+        {
+            $group: {
+                _id: "$trip",
+                tripCount: { $sum: 1 }
+            }
+        }, {
+            $group: {
+                _id: null,
+                avgTripApplication: { $avg: "$tripCount" },
+                maxTripApplication: { $max: "$tripCount" },
+                minTripApplication: { $min: "$tripCount" },                
+                stdDevTripApplication: { $stdDevPop: "$tripCount" }
+            }
+        },{
+            $project: {
+                _id: 0,
+                avgTripApplication: "$avgTripApplication",
+                maxTripApplication: "$maxTripApplication",
+                minTripApplication: "$minTripApplication",
+                stdDevTripApplication: "$stdDevTripApplication"
+            }
+        }
+    ], function(err, res){
+        callback(err, res[0]);
+    });
+}
+
+// The average, the minimum, the maximum, and the standard deviation of the price of the trips.
+function pricePerTrip(callback){
+    Trip.aggregate([
+        {
+            $group: {
+                _id: null,
+                avgPrice: { $avg: "$price" },
+                minPrice: { $min: "$price" },
+                maxPrice: { $max: "$price" }, 
+                stdDevPrice: { $stdDevPop: "$price" }
+            }
+        }, {
+            $project: {
+                _id: 0,
+                avgPrice: "$avgPrice",
+                minPrice: "$minPrice",
+                maxPrice: "$maxPrice",
+                stdDevPrice: "$stdDevPrice"
+            }
+        }
+    ], function (err, res) {
+        callback(err, res[0]);
+    });
+}
