@@ -21,9 +21,9 @@ var DataWareHouseSchema = new mongoose.Schema({
         type: Number,
         min: 0
     },
-    topFinderWords: [{
-        word: String,
-        wordSum: Number
+    topFinderKeyWords: [{
+        keyword: String,
+        keywordSum: Number
     }],
     computationMoment: {
         type: Date,
