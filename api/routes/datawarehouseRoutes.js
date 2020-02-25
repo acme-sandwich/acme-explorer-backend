@@ -1,14 +1,14 @@
 'use strict';
 module.exports = function (app) {
-    var dashboard = require('../controllers/dashboardController');
+    var datawarehouse = require('../controllers/datawarehouseController');
 
-    app.route('/v1/dashboard') // Returns all the dashboard metrics present in the requirements document.
-        .get(dashboard.dashboard_info)
+    app.route('/v1/datawarehouse') // Returns all the dashboard metrics present in the requirements document.
+        .get(datawarehouse.datawarehouse_info)
 
     app.route('/v1/cube') // Returns he amount of money that explorer e has spent on trips during period p, so it needs query params.
-        .get(dashboard.cube)
+        .get(datawarehouse.cube)
 
     app.route('/v1/cube/explorers') // Returns the explorers that spent the money returned by the cube, so it needs query params. 
-        .get(dashboard.cube_explorers)
+        .get(datawarehouse.cube_explorers)
 
 }

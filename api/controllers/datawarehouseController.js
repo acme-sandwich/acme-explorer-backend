@@ -1,5 +1,5 @@
 'use strict';
-/*---------------DASHBOARD----------------------*/
+/*---------------DATAWAREHOUSE----------------------*/
 var mongoose = require('mongoose'),
 	Trip = mongoose.model('Trips'),
     Application = mongoose.model('Applications'),
@@ -8,7 +8,7 @@ var mongoose = require('mongoose'),
     Finder = mongoose.model('Finders'),
     Sponsorship = mongoose.model('Sponsorships');
 
-exports.dashboard_info = function (req, res) {
+exports.datawarehouse_info = function (req, res) {
 // TODO Generate the different metrics that the requirements doc says about dashboards.
 
 }

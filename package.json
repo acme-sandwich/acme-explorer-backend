@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/acme-sandwich/acme-explorer-backend#readme",
   "dependencies": {
+    "async": "^3.2.0",
     "bcrypt": "^3.0.8",
     "express": "^4.17.1",
     "mocker-data-generator": "^2.6.6",
