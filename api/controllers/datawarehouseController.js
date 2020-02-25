@@ -8,7 +8,7 @@ var mongoose = require('mongoose'),
     Finder = mongoose.model('Finders'),
     Sponsorship = mongoose.model('Sponsorships');
 
-exports.datawarehouse_info = function (req, res) {
+exports.list_all_indicators = function (req, res) {
 // TODO Generate the different metrics that the requirements doc says about dashboards.
 
 }
