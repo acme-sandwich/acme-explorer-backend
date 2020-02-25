@@ -105,3 +105,86 @@ function pricePerTrip(callback){
         callback(err, res[0]);
     });
 }
+
+// The ratio of applications grouped by status
+function.applicationsByStatus(callback){
+    Application.aggregate([
+        {
+            $facet: {
+                totalApplications: [{ $group: {_id: null, totalApplications: {"$sum": 1}}}],
+                pendingApplications: [
+                    {$match: {status: "PENDING"}},
+                    {$group: {_id: null, totalApplications: {"$sum": 1}}}
+                ],
+                rejectedApplications: [
+                    {$match: {status: "REJECTED"}},
+                    {$group: {_id: null, totalApplications: {"$sum": 1}}}
+                ],
+                dueApplications: [
+                    {$match: {status: "DUE"}},
+                    {$group: {_id: null, totalApplications: {"$sum": 1}}}
+                ],
+                acceptedApplications: [
+                    {$match: {status: "ACCEPTED"}},
+                    {$group: {_id: null, totalApplications: {"$sum": 1}}}
+                ],
+                cancelledApplications: [
+                    {$match: {status: "CANCELLED"}},
+                    {$group: {_id: null, totalApplications: {"$sum": 1}}}
+                ]
+            }
+        },
+        {
+            $project: {
+                _id: 0,
+                ratioPendingApplications: {$divide: [{$arrayElemAt: ["$pendingApplications.totalApplications", 0]}, {$arrayElemAt: ["$totalApplications.totalApplications", 0]}]},
+                ratioRejectedApplications: {$divide: [{$arrayElemAt: ["$rejectedApplications.totalApplications", 0]}, {$arrayElemAt: ["$totalApplications.totalApplications", 0]}]},
+                ratioDueApplications: {$divide: [{$arrayElemAt: ["$dueApplications.totalApplications", 0]}, {$arrayElemAt: ["$totalApplications.totalApplications", 0]}]},
+                ratioAcceptedApplications: {$divide: [{$arrayElemAt: ["$acceptedApplications.totalApplications", 0]}, {$arrayElemAt: ["$totalApplications.totalApplications", 0]}]},
+                ratioCancelledApplications: {$divide: [{$arrayElemAt: ["$cancelledApplications.totalApplications", 0]}, {$arrayElemAt: ["$totalApplications.totalApplications", 0]}]}
+
+            }
+        },
+        {
+            $project: {
+                ratioPendingApplications: {
+                    $cond: {
+                        if: {$eq: [null, "$ratioPendingApplications"]},
+                        then: 0,
+                        else: "$ratioPendingApplications"
+                    }
+                },
+                ratioRejectedApplications: {
+                    $cond: {
+                        if: {$eq: [null, "$ratioRejectedApplications"]},
+                        then: 0,
+                        else: "$ratioRejectedApplications"
+                    }
+                },
+                ratioDueApplications: {
+                    $cond: {
+                        if: {$eq: [null, "$ratioDueApplications"]},
+                        then: 0,
+                        else: "$ratioDueApplications"
+                    }
+                },
+                ratioAcceptedApplications: {
+                    $cond: {
+                        if: {$eq: [null, "$ratioAcceptedApplications"]},
+                        then: 0,
+                        else: "$ratioAcceptedApplications"
+                    }
+                },
+                ratioCancelledApplications: {
+                    $cond: {
+                        if: {$eq: [null, "$ratioCancelledApplications"]},
+                        then: 0,
+                        else: "$ratioCancelledApplications"
+                    }
+                }
+            }
+        }
+    ], function(err, res) {
+        callback(err, res[0]);
+    });
+};
