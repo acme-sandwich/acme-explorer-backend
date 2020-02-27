@@ -3,6 +3,7 @@
 var async = require("async");
 var mongoose = require('mongoose');
 var DataWareHouse = mongoose.model('DataWareHouse');
+var Cube = mongoose.model('Cube');
 var Trip = mongoose.model('Trips');
 var Application = mongoose.model('Applications');
 var Actor = mongoose.model('Actors');
@@ -280,9 +281,16 @@ function topFindersKeywords(callback){
     // TODO
 }
 
+// Returns the amount of money that explorer e has spent on trips during period p, which can be M01-M36 to 
+// denote any of the last 1-36 months or Y01-Y03 to denote any of the last three years
 exports.cube = function (req, res){
-    const explorer = req.params.explorerId;
-    const period = req.params.
+    // Tengo que recorrer Applications y filtrar para que la fecha esté dentro del periodo,
+    // el explorer sea el explorer en cuestión y el status esté a PAGADO. Obtengo los trips.
+    // Una vez tengo los trips correspondientes, recorro Trip filtrando por id y calculando la suma total
+    // de los precios.
+    //Application.aggregate([
+    //
+    //]);
 };
 
 exports.cube_explorers = function (req, res){

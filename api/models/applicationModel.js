@@ -8,6 +8,10 @@ var ApplicationSchema = new Schema({
     required: 'Kindly enter the application moment',
     default: Date.now()
   },
+  updateMoment: {
+    type: Date,
+    required: [dateValidator, 'UpdateMoment must be greater than moment']
+  },
   status: {
     type: String,
     required: 'Kindly enter the application status',
@@ -34,4 +38,9 @@ ApplicationSchema.index({trip: 1})
 ApplicationSchema.index({explorer: 1});
 ApplicationSchema.index({explorer: 1, status: 'text'});
 
+function dateValidator(value){
+  return this.moment < value;
+}
+
 module.exports = mongoose.model('Applications', ApplicationSchema);
+

@@ -40,10 +40,16 @@ const period_enum = ['M01','M02','M03','M04','M05','M06','M07','M08','M09','M10'
 
 var CubeSchema = new mongoose.Schema({
     explorer: {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        required: function(){
+            return this.comparisonOperator == null;
+        }
     },
     explorers:{
-        type: [Schema.Types.ObjectId]
+        type: [Schema.Types.ObjectId],
+        required: function(){
+            return this.explorer == null;
+        }
     },
     period: {
         type: String,
@@ -57,7 +63,10 @@ var CubeSchema = new mongoose.Schema({
     },
     comparisonOperator:{
         type: String,
-        enum: ['=', '!=', '>', '>=', '<', '<=']
+        enum: ['=', '!=', '>', '>=', '<', '<='],
+        required: function(){
+            return this.explorer == null;
+        }
     },
     computationMoment: {
         type: Date,
