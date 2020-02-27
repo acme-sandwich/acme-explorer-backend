@@ -257,7 +257,23 @@ function ratioApplicationsByStatus(callback){
 };
 
 function averageFindersPrice(callback){
-    //TODO
+    Finder.aggregate([
+        {
+            $group: {
+                _id: null,
+                avgMinPrice: { $avg: "$minPrice" },
+                avgMaxPrice: { $min: "$maxPrice" }
+            }
+        }, {
+            $project: {
+                _id: 0,
+                avgMinPrice: "$avgMinPrice",
+                avgMaxPrice: "$avgMaxPrice"
+            }
+        }
+    ], function (err, res) {
+        callback(err, res[0]);
+    });
 }
 
 function topFindersKeywords(callback){
