@@ -71,8 +71,8 @@ function createDataWareHouseJob(){
                 new_dataWareHouse.applicationsPerTrip = results[1];
                 new_dataWareHouse.pricePerTrip = results[2];
                 new_dataWareHouse.ratioApplicationsPerStatus = results[3];
-
-
+                new_dataWareHouse.averageFindersPrice = results[4];
+                new_dataWareHouse.topFindersKeywords = results[5];
 
                 new_dataWareHouse.save(function (err, datawarehouse){
                     if(err){
@@ -281,7 +281,8 @@ function topFindersKeywords(callback){
 }
 
 exports.cube = function (req, res){
-    // TODO
+    const explorer = req.params.explorerId;
+    const period = req.params.
 };
 
 exports.cube_explorers = function (req, res){
