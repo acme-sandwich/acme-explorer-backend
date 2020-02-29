@@ -8,6 +8,9 @@ var express = require('express'),
   Trip = require('./api/models/tripModel'),
   Application = require('./api/models/applicationModel'),
   Configuration = require('./api/models/configurationModel'),
+  DataWareHouse = require('./api/models/datawarehouseModel').DataWareHouse,
+  DataWareHouseTools = require('./api/controllers/datawarehouseController'),
+  Cube = require('./api/models/datawarehouseModel').Cube,
   bodyParser = require('body-parser');
 
 // MongoDB URI building
@@ -40,6 +43,7 @@ var routesSponsorship = require('./api/routes/sponsorshipRoutes');
 var routesApplications = require('./api/routes/applicationRoutes');
 var routesConfigurations = require('./api/routes/configurationRoutes');
 var routesStorage = require('./api/routes/storageRoutes');
+var routesDatawarehouse = require('./api/routes/datawarehouseRoutes');
 
 
 routesActors(app);
@@ -49,6 +53,7 @@ routesSponsorship(app);
 routesApplications(app);
 routesConfigurations(app);
 routesStorage(app);
+routesDatawarehouse(app);
 
 
 console.log("Connecting DB to: " + mongoDBURI);
@@ -61,3 +66,5 @@ mongoose.connection.on("open", function (err, conn) {
 mongoose.connection.on("error", function (err, conn) {
     console.error("DB init error " + err);
 });
+
+DataWareHouseTools.createDataWareHouseJob();

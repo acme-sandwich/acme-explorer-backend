@@ -287,6 +287,11 @@ exports.generate_mocker_data = function (req, res) {
                 return this.faker.date.between("2019-12-30", "2020-02-01");
             }
         },
+        updateMoment: {
+            function: function () {
+                return this.faker.date.between("2019-12-30", "2020-02-01");
+            }
+        },
         status: {
             randexp: /PENDING|REJECTED|DUE|ACCEPTED|CANCELLED/
         },

@@ -2,25 +2,108 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var DataWareHouseSchema = new mongoose.Schema({
-    tripsPerManagers: [{
-        type: Number
-    }],
-    applicationsPerTrip: [{
-        type: Number
-    }],
-    pricePerTrip: [{
-        type: Number
-    }],
-    ratioApplicationsPerStatus: [{
-        type: Number,
-        min: 0,
-        max: 1
-    }],
-    avgFinderPrices: {
+const TripsPerManagerSchema = new Schema({
+    avgManagerTrips: {
         type: Number,
         min: 0
     },
+    maxManagerTrips: {
+        type: Number,
+        min: 0
+    },
+    minManagerTrips: {
+        type: Number,
+        miin: 0
+    },  
+    stdDevManagerTrips: {
+        type: Number,
+        min: 0
+    }
+});
+
+const ApplicationsPerTripSchema = new Schema({
+    avgTripApplication: {
+        type: Number,
+        min: 0
+    },
+    maxTripApplication: {
+        type: Number,
+        min: 0
+    },
+    minTripApplication: {
+        type: Number,
+        miin: 0
+    },  
+    stdDevTripApplication: {
+        type: Number,
+        min: 0
+    }
+});
+
+const PricePerTripSchema = new Schema({
+    avgPrice: {
+        type: Number,
+        min: 0
+    },
+    minPrice: {
+        type: Number,
+        min: 0
+    },
+    maxPrice: {
+        type: Number,
+        miin: 0
+    },  
+    stdDevPrice: {
+        type: Number,
+        min: 0
+    }
+});
+
+const RatioApplicationsPerStatusSchema = new Schema({
+    ratioPendingApplications: {
+        type: Number,
+        min: 0,
+        max: 1
+    },
+    ratioRejectedApplications: {
+        type: Number,
+        min: 0,
+        max: 1
+    },
+    ratioDueApplications: {
+        type: Number,
+        min: 0,
+        max: 1
+    },  
+    ratioAcceptedApplications: {
+        type: Number,
+        min: 0,
+        max: 1
+    },  
+    ratioCancelledApplications: {
+        type: Number,
+        min: 0,
+        max: 1
+    }
+});
+
+const AverageFindersPriceSchema = new Schema({
+    avgMinPrice: {
+        type: Number,
+        min: 0,
+    },
+    avgMaxPrice: {
+        type: Number,
+        min: 0,
+    }
+});
+
+var DataWareHouseSchema = new mongoose.Schema({
+    tripsPerManagers: TripsPerManagerSchema,
+    applicationsPerTrip: ApplicationsPerTripSchema,
+    pricePerTrip: PricePerTripSchema,
+    ratioApplicationsPerStatus: RatioApplicationsPerStatusSchema,
+    avgFinderPrices: AverageFindersPriceSchema,
     topFinderKeyWords: [{
         keyword: String,
         keywordSum: Number
@@ -77,5 +160,5 @@ var CubeSchema = new mongoose.Schema({
 DataWareHouseSchema.index({computationMoment: -1});
 CubeSchema.index({computationMoment: -1});
 
-module.exports = mongoose.model('DataWareHouse', DataWareHouseSchema);
-module.exports = mongoose.model('Cube', CubeSchema);
+module.exports.DataWareHouse = mongoose.model('DataWareHouse', DataWareHouseSchema);
+module.exports.Cube = mongoose.model('Cube', CubeSchema);
