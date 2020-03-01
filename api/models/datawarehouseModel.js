@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 const TripsPerManagerSchema = new Schema({
+    _id: false,
     avgManagerTrips: {
         type: Number,
         min: 0
@@ -22,6 +23,7 @@ const TripsPerManagerSchema = new Schema({
 });
 
 const ApplicationsPerTripSchema = new Schema({
+    _id: false,
     avgTripApplication: {
         type: Number,
         min: 0
@@ -41,6 +43,7 @@ const ApplicationsPerTripSchema = new Schema({
 });
 
 const PricePerTripSchema = new Schema({
+    _id: false,
     avgPrice: {
         type: Number,
         min: 0
@@ -60,6 +63,7 @@ const PricePerTripSchema = new Schema({
 });
 
 const RatioApplicationsPerStatusSchema = new Schema({
+    _id: false,
     ratioPendingApplications: {
         type: Number,
         min: 0,
@@ -88,6 +92,7 @@ const RatioApplicationsPerStatusSchema = new Schema({
 });
 
 const AverageFindersPriceSchema = new Schema({
+    _id: false,
     avgMinPrice: {
         type: Number,
         min: 0,
@@ -105,6 +110,7 @@ var DataWareHouseSchema = new mongoose.Schema({
     ratioApplicationsPerStatus: RatioApplicationsPerStatusSchema,
     avgFinderPrices: AverageFindersPriceSchema,
     topFinderKeyWords: [{
+        _id: false,
         keyword: String,
         keywordSum: Number
     }],

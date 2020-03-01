@@ -353,10 +353,10 @@ exports.generate_mocker_data = function (req, res) {
             faker: 'random.boolean',
             virtual: true
         },
-        keyword: {
+        keyWord: {
             function: function () {
                 if (!this.object.defaultFinder) {
-                    return this.faker.address.country() + " " + this.faker.commerce.product();
+                    return this.faker.commerce.product();
                 } else {
                     return null;
                 }

@@ -68,12 +68,12 @@ function createDataWareHouseJob() {
             if (err) {
                 console.log("Error computing datawarehouse: " + err);
             } else {
-                new_dataWareHouse.tripsPerManager = results[0];
+                new_dataWareHouse.tripsPerManagers = results[0];
                 new_dataWareHouse.applicationsPerTrip = results[1];
                 new_dataWareHouse.pricePerTrip = results[2];
                 new_dataWareHouse.ratioApplicationsPerStatus = results[3];
-                new_dataWareHouse.averageFindersPrice = results[4];
-                new_dataWareHouse.topFindersKeywords = results[5];
+                new_dataWareHouse.avgFinderPrices = results[4];
+                new_dataWareHouse.topFinderKeyWords = results[5];
 
                 new_dataWareHouse.save(function (err, datawarehouse) {
                     if (err) {
@@ -278,11 +278,10 @@ function averageFindersPrice(callback) {
 }
 
 function topFindersKeywords(callback) {
-    Actor.aggregate([
+    Finder.aggregate([
         {
-            $project:
-            {
-                "finder.keyword": 1
+            $match: {
+                keyWord: { $ne: null }
             }
         },
         {
@@ -294,29 +293,57 @@ function topFindersKeywords(callback) {
                             numKeywords: { $sum: 1 }
                         }
                     },
-                    { $project: { _id: 0, limitTopPercentage: { $ceil: { $multiply: ["$numKeywords", 0.1] } } } }
+                    {
+                        $project:
+                        {
+                            _id: 0,
+                            limitTopPercentage: {
+                                $ceil: {
+                                    $multiply: ["$numKeywords", 0.1]
+                                }
+                            }
+                        }
+                    }
                 ],
-                keywords: [{ $group: { _id: "$finder.keyword", keywordSum: { $sum: 1 } } }, { $project: { _id: 0, keyword: "$_id", keywordSum: 1 } }, { $sort: { "keywordSum": -1 } }]
+                keywords: [{
+                    $group: {
+                        _id: "$keyWord",
+                        keywordSum: {
+                            $sum: 1
+                        }
+                    }
+                }, {
+                    $project: {
+                        _id: 0,
+                        keyword: "$_id",
+                        keywordSum: 1
+                    }
+                }, {
+                    $sort: { "keywordSum": -1 }
+                }]
             }
         },
-        { $project: { topKeywords: { $slice: ["$keywords", { $arrayElemAt: ["$preComputation.limitTopPercentage", 0] }] } } }]
-
+        {
+            $project: {
+                topKeywords:
+                {
+                    $slice: ["$keywords",
+                        {
+                            $arrayElemAt: ["$preComputation.limitTopPercentage", 0]
+                        }]
+                }
+            }
+        }]
         , function (err, res) {
-            var resultado;
+            var arrayResultado = [];
             if (res[0].topKeywords != null) {
-                var keywords = res[0].topKeywords;
-                var arrayResultado = [];
-                for (var i = 0; i < res[0].topKeywords.length; i++) {
+                var keywords = res[0].topKeywords;               
+                for (var i = 0; i < keywords.length; i++) {
                     if (keywords[i].keyword != null)
                         arrayResultado.push(keywords[i]);
                 }
-                if (arrayResultado.length > 0) {
-                    res[0].topKeywords = arrayResultado;
-                    resultado = res[0];
-                }
             }
-            
-            callback(err, resultado);
+            callback(err, arrayResultado);
         });
 }
 
