@@ -63,7 +63,7 @@ function createDataWareHouseJob() {
             pricePerTrip,
             ratioApplicationsByStatus,
             averageFindersPrice,
-            //topFindersKeywords
+            topFindersKeywords
         ], function (err, results) {
             if (err) {
                 console.log("Error computing datawarehouse: " + err);
@@ -73,7 +73,7 @@ function createDataWareHouseJob() {
                 new_dataWareHouse.pricePerTrip = results[2];
                 new_dataWareHouse.ratioApplicationsPerStatus = results[3];
                 new_dataWareHouse.averageFindersPrice = results[4];
-                //new_dataWareHouse.topFindersKeywords = results[5];
+                new_dataWareHouse.topFindersKeywords = results[5];
 
                 new_dataWareHouse.save(function (err, datawarehouse) {
                     if (err) {
@@ -278,7 +278,46 @@ function averageFindersPrice(callback) {
 }
 
 function topFindersKeywords(callback) {
-    // TODO
+    Actor.aggregate([
+        {
+            $project:
+            {
+                "finder.keyword": 1
+            }
+        },
+        {
+            $facet: {
+                preComputation: [
+                    {
+                        $group: {
+                            _id: null,
+                            numKeywords: { $sum: 1 }
+                        }
+                    },
+                    { $project: { _id: 0, limitTopPercentage: { $ceil: { $multiply: ["$numKeywords", 0.1] } } } }
+                ],
+                keywords: [{ $group: { _id: "$finder.keyword", keywordSum: { $sum: 1 } } }, { $project: { _id: 0, keyword: "$_id", keywordSum: 1 } }, { $sort: { "keywordSum": -1 } }]
+            }
+        },
+        { $project: { topKeywords: { $slice: ["$keywords", { $arrayElemAt: ["$preComputation.limitTopPercentage", 0] }] } } }]
+
+        , function (err, res) {
+            var resultado;
+            if (res[0].topKeywords != null) {
+                var keywords = res[0].topKeywords;
+                var arrayResultado = [];
+                for (var i = 0; i < res[0].topKeywords.length; i++) {
+                    if (keywords[i].keyword != null)
+                        arrayResultado.push(keywords[i]);
+                }
+                if (arrayResultado.length > 0) {
+                    res[0].topKeywords = arrayResultado;
+                    resultado = res[0];
+                }
+            }
+            
+            callback(err, resultado);
+        });
 }
 
 // This function receives a string of the form "M01",..., "M36" or "Y01",..., "Y03" and returns a Javascript
