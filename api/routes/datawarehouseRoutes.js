@@ -12,7 +12,7 @@ module.exports = function (app) {
         .get(datawarehouse.last_indicator)
 
     // Returns he amount of money that explorer e has spent on trips during period p, so it needs query params.
-    app.route('/v1/cube')
+    app.route('/v1/cube/:explorer/:period')
         .get(datawarehouse.cube)
 
     // Returns the explorers that spent the money returned by the cube, so it needs query params. 

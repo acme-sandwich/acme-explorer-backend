@@ -41,7 +41,7 @@ var CronTime = require('cron').CronTime;
 //'*/30 * * * * *' cada 30 segundos
 //'*/10 * * * * *' cada 10 segundos
 //'* * * * * *' cada segundo
-var rebuildPeriod = '*/10 * * * * *';  //Este es cada 10 segundos, por motivos de prueba
+var rebuildPeriod = '0 0 * * * *';  //Cada hora
 var computeDataWareHouseJob;
 
 exports.rebuildPeriod = function (req, res) {
@@ -337,7 +337,7 @@ function topFindersKeywords(callback) {
         , function (err, res) {
             var arrayResultado = [];
             if (res[0].topKeywords != null) {
-                var keywords = res[0].topKeywords;               
+                var keywords = res[0].topKeywords;
                 for (var i = 0; i < keywords.length; i++) {
                     if (keywords[i].keyword != null)
                         arrayResultado.push(keywords[i]);
@@ -373,27 +373,33 @@ function getStartDateFromPeriod(periodString) {
         }
         return { today: today, startPeriodDate: startPeriodDate };
     } catch (error) {
-        return { error: "Period string is wrongly formed. Must be M01 - M36 or Y01 - Y03" };
+        console.log(error);
+        return { error: error };
     }
 }
+
+function createObjectId(elementId) {
+    return mongoose.Types.ObjectId(elementId);
+}
+//hola zoy muy memé :) ¿y tú?
+
 
 // Returns the amount of money that explorer e has spent on trips during period p, which can be M01-M36 to 
 // denote any of the last 1-36 months or Y01-Y03 to denote any of the last three years
 exports.cube = function (req, res) {
     // Tengo que recorrer Applications y filtrar para que la fecha esté dentro del periodo,
     // el explorer sea el explorer en cuestión y el status esté a ACCEPTED. Obtengo los trips.
-    // Una vez tengo los trips correspondientes, recorro Trip filtrando por id y calculando la suma total
-    // de los precios.
-    var explorerId = req.body.explorer;
-    var periodRange = req.body.period;
+    var explorerId = req.params.explorer;
+    var periodRange = req.params.period;
     var datesPeriod = getStartDateFromPeriod(periodRange);
     if (datesPeriod.error) {
         res.status(400).send(datesPeriod.error);
     } else {
         var maxDateRange = datesPeriod.today; // Will always be today's date
         var minDateRange = datesPeriod.startPeriodDate;
-
-        var trips = Application.aggregate([
+        explorerId = mongoose.Types.ObjectId(explorerId); // Mandatory cast from String to ObjectId
+        var tripsArray;
+        Application.aggregate([
             {
                 $match: {
                     explorer: explorerId,
@@ -403,17 +409,37 @@ exports.cube = function (req, res) {
                         $lte: maxDateRange
                     }
                 }
-            }, {
+            },
+            { $group: { _id: null, trips: { $push: "$_id" } } },
+            {
                 $project: {
                     _id: 0,
-                    trips: "$trip"
+                    trips: "$trips"
                 }
             }
-        ], function (err, res) {
-            res(res[0]);
+        ], function (err, trips_returned) {
+            tripsArray = trips_returned[0].trips;
+            for(var i = 0; i < tripsArray.length; i++){
+                tripsArray[i] = mongoose.Types.ObjectId(tripsArray[i]);
+            }
+            var testArray = [mongoose.Types.ObjectId("5e5bdf6ac5da53197c2c9182"),mongoose.Types.ObjectId("5e5bdf6ac5da53197c2c9166")]
+            // Una vez tengo los trips correspondientes, recorro Trip filtrando por id
+            // y calculando la suma total de los precios.
+            Trip.aggregate([
+                {
+                    $match: {
+                        _id: { $in: testArray }
+                    }
+                }, {
+                    $group: {
+                        _id: null,
+                        money: {$sum: "$price"}
+                    }
+                }
+            ], function(err2, docs){
+                res.json(docs[0]);
+            });
         });
-
-
     }
 };
 
