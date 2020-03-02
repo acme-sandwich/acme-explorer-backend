@@ -303,62 +303,30 @@ function topFindersKeywords(callback) {
             }
         },
         {
-            $facet: {
-                preComputation: [
-                    {
-                        $group: {
-                            _id: null,
-                            numKeywords: { $sum: 1 }
-                        }
-                    },
-                    {
-                        $project:
-                        {
-                            _id: 0,
-                            limitTopPercentage: {
-                                $ceil: {
-                                    $multiply: ["$numKeywords", 0.1]
-                                }
-                            }
-                        }
-                    }
-                ],
-                keywords: [{
-                    $group: {
-                        _id: "$keyWord",
-                        keywordSum: {
-                            $sum: 1
-                        }
-                    }
-                }, {
-                    $project: {
-                        _id: 0,
-                        keyword: "$_id",
-                        keywordSum: 1
-                    }
-                }, {
-                    $sort: { "keywordSum": -1 }
-                }]
+            $group: {
+                _id: "$keyWord",
+                keywordSum: {$sum: 1}
             }
         },
         {
             $project: {
-                topKeywords:
-                {
-                    $slice: ["$keywords",
-                        {
-                            $arrayElemAt: ["$preComputation.limitTopPercentage", 0]
-                        }]
-                }
+                _id: 0,
+                keyword: "$_id",
+                keywordSum: 1
             }
+        },
+        {
+            $sort: {"keywordSum": -1}
+        },
+        {
+            $limit: 10
         }]
         , function (err, res) {
             var arrayResultado = [];
-            if (res[0].topKeywords != null) {
-                var keywords = res[0].topKeywords;
-                for (var i = 0; i < keywords.length; i++) {
-                    if (keywords[i].keyword != null)
-                        arrayResultado.push(keywords[i]);
+            if (res != null) {
+                for (var i = 0; i < res.length; i++) {
+                    if (res[i].keyword != null)
+                        arrayResultado.push(res[i]);
                 }
             }
             callback(err, arrayResultado);
