@@ -304,25 +304,6 @@ function topFindersKeywords(callback) {
         },
         {
             $facet: {
-                preComputation: [
-                    {
-                        $group: {
-                            _id: null,
-                            numKeywords: { $sum: 1 }
-                        }
-                    },
-                    {
-                        $project:
-                        {
-                            _id: 0,
-                            limitTopPercentage: {
-                                $ceil: {
-                                    $multiply: ["$numKeywords", 0.1]
-                                }
-                            }
-                        }
-                    }
-                ],
                 keywords: [{
                     $group: {
                         _id: "$keyWord",
@@ -345,10 +326,7 @@ function topFindersKeywords(callback) {
             $project: {
                 topKeywords:
                 {
-                    $slice: ["$keywords",
-                        {
-                            $arrayElemAt: ["$preComputation.limitTopPercentage", 0]
-                        }]
+                    $slice: ["$keywords",10]
                 }
             }
         }]
@@ -477,8 +455,6 @@ function computeCube(callback) {
 // Returns the amount of money that explorer e has spent on trips during period p, which can be M01-M36 to 
 // denote any of the last 1-36 months or Y01-Y03 to denote any of the last three years
 exports.cube = function (req, res) {
-    // Tengo que recorrer Applications y filtrar para que la fecha esté dentro del periodo,
-    // el explorer sea el explorer en cuestión y el status esté a ACCEPTED. Obtengo los trips.
     var explorerId = req.params.explorer;
     var periodRange = req.params.period;
     var period = periodRange;
@@ -498,8 +474,6 @@ exports.cube = function (req, res) {
                 period = "Y01";
         }
     }
-    console.log(explorerId);
-    console.log(period);
     Cube.aggregate([
         {
             $match: {
@@ -520,57 +494,6 @@ exports.cube = function (req, res) {
             res.send(cubeReturned);
         }
     });
-
-    /*var datesPeriod = getStartDateFromPeriod(periodRange);
-    if (datesPeriod.error) {
-        res.status(400).send(datesPeriod.error);
-    } else {
-        var maxDateRange = datesPeriod.today; // Will always be today's date
-        var minDateRange = datesPeriod.startPeriodDate;
-        explorerId = mongoose.Types.ObjectId(explorerId); // Mandatory cast from String to ObjectId
-        var tripsArray;
-        Application.aggregate([
-            {
-                $match: {
-                    explorer: explorerId,
-                    status: "ACCEPTED",
-                    updateMoment: {
-                        $gte: minDateRange,
-                        $lte: maxDateRange
-                    }
-                }
-            },
-            { $group: { _id: null, trips: { $push: "$trip" } } },
-            {
-                $project: {
-                    _id: 0,
-                    trips: "$trips"
-                }
-            }
-        ], function (err, trips_returned) {
-            tripsArray = trips_returned[0].trips;
-            for(var i = 0; i < tripsArray.length; i++){
-                tripsArray[i] = mongoose.Types.ObjectId(tripsArray[i]);
-            }
-            var testArray = [mongoose.Types.ObjectId("5e5bdf6ac5da53197c2c9182"),mongoose.Types.ObjectId("5e5bdf6ac5da53197c2c9166")]
-            // Una vez tengo los trips correspondientes, recorro Trip filtrando por id
-            // y calculando la suma total de los precios.
-            Trip.aggregate([
-                {
-                    $match: {
-                        _id: { $in: testArray }
-                    }
-                }, {
-                    $group: {
-                        _id: null,
-                        money: {$sum: "$price"}
-                    }
-                }
-            ], function(err2, docs){
-                res.json(docs[0]);
-            });
-        });
-    }*/
 };
 
 function getMongoComparisonOperatorFromString(coString) {
