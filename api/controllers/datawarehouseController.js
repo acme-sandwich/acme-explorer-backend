@@ -400,36 +400,40 @@ function createObjectId(elementId) {
     return mongoose.Types.ObjectId(elementId);
 }
 
-function computeCube(callback){
-    for(var i = 1; i < 37; i++){
+function computeCube(callback) {
+    for (var i = 1; i < 37; i++) {
         var period = "M";
-        if(i < 10){
+        if (i < 10) {
             period = period + "0" + i;
-        }else{
+        } else {
             period = period + i;
         }
         var minDateRange = new Date();
         minDateRange.setMonth(minDateRange.getMonth() - i);
         Application.aggregate([
             {
-                $match:{
+                $match: {
                     status: "ACCEPTED",
                     updateMoment: {
                         $gte: minDateRange,
                     }
                 }
             },
-            {$group: {
-                _id: "$explorer",
-                trips: {$push: "$trip"},
-            }},
-            {$project:{
-                _id: "$_id",
-                trips: "$trips",
-                period: period
-            }}
-        ], function(err, explorer_trips){
-            for(var j = 0; j < explorer_trips.length; j++){
+            {
+                $group: {
+                    _id: "$explorer",
+                    trips: { $push: "$trip" },
+                }
+            },
+            {
+                $project: {
+                    _id: "$_id",
+                    trips: "$trips",
+                    period: period
+                }
+            }
+        ], function (err, explorer_trips) {
+            for (var j = 0; j < explorer_trips.length; j++) {
                 var tripsIdArray = explorer_trips[j].trips;
                 var explorerId = explorer_trips[j]._id;
                 var periodCube = explorer_trips[j].period;
@@ -441,7 +445,7 @@ function computeCube(callback){
                     }, {
                         $group: {
                             _id: null,
-                            money: {$sum: "$price"}
+                            money: { $sum: "$price" }
                         }
                     }, {
                         $project: {
@@ -450,7 +454,7 @@ function computeCube(callback){
                             periodCube: periodCube
                         }
                     }
-                ], function(err2, docs){
+                ], function (err2, docs) {
                     var new_cube = new Cube();
                     new_cube.explorer = docs[0].explorer;
                     new_cube.money = docs[0].money;
@@ -467,7 +471,7 @@ function computeCube(callback){
             }
         });
     }
-    callback(null, 1); 
+    callback(null, 1);
 }
 
 // Returns the amount of money that explorer e has spent on trips during period p, which can be M01-M36 to 
@@ -479,8 +483,8 @@ exports.cube = function (req, res) {
     var periodRange = req.params.period;
     var period = periodRange;
     explorerId = mongoose.Types.ObjectId(explorerId);
-    if(periodRange.startsWith("Y")){
-        switch(periodRange){
+    if (periodRange.startsWith("Y")) {
+        switch (periodRange) {
             case "Y01":
                 period = "M12";
                 break;
@@ -503,16 +507,16 @@ exports.cube = function (req, res) {
                 period: period
             }
         }, {
-            $project:{
+            $project: {
                 explorer: "$explorer",
                 money: "$money",
                 period: period
             }
         }
-    ], function(err, cubeReturned){
-        if(err){
+    ], function (err, cubeReturned) {
+        if (err) {
             res.status(404);
-        }else{
+        } else {
             res.send(cubeReturned);
         }
     });
@@ -569,6 +573,66 @@ exports.cube = function (req, res) {
     }*/
 };
 
+function getMongoComparisonOperatorFromString(coString) {
+    var co;
+    switch (coString) {
+        case "==":
+            co = "$eq";
+            break;
+        case '!=':
+            co = "$ne";
+            break;
+        case '>':
+            co = "$gt";
+            break;
+        case '>=':
+            co = "$gte";
+            break;
+        case '<':
+            co = "$lt";
+            break;
+        case '<=':
+            co = "$lte";
+            break;
+        default:
+            co = null
+            break;
+    }
+    return co;
+}
+
+// Given the period 'p', an amount of money 'm and a comparison operator 'co', 
+// returns the explorers that have spent 'co' than 'm' during 'p'.
 exports.cube_explorers = function (req, res) {
-    // TODO
+    var supportedCO = ['==', '!=', '>', '>=', '<', '<='];
+    var queryCO = req.query.co;
+    var period = req.query.period;
+    var money = req.query.money;
+    if (co.in(supportedCO)) {
+        var jsonCO = {};
+        var co = getMongoComparisonOperatorFromString(queryCO);
+        jsonCO[co] = money; // if 'co' is >=, and money = 20, this will give {$gte: 20}
+        Cube.aggregate([
+            {
+                $match: {
+                    period: period,
+                    money: jsonCO
+                }
+            }, { $group: { _id: "$explorer", explorers: { $push: "$explorer" } } },
+            {
+                $project: {
+                    _id: 0,
+                    explorers: "$explorers"
+                }
+            }
+        ], function(err, explorersReturned){
+            if (err) {
+                res.status(404);
+            } else {
+                res.send(explorersReturned);
+            }
+        });
+    } else {
+        res.status(400).send("Comparison operator not supported");
+    }
 };

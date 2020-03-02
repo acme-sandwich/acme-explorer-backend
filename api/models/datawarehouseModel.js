@@ -134,12 +134,6 @@ var CubeSchema = new mongoose.Schema({
             return this.comparisonOperator == null;
         }
     },
-    explorers:{
-        type: [Schema.Types.ObjectId],
-        required: function(){
-            return this.explorer == null;
-        }
-    },
     period: {
         type: String,
         required: 'Kindly enter the period of time',
@@ -150,13 +144,6 @@ var CubeSchema = new mongoose.Schema({
         required: true,
         min: 0
     },
-    comparisonOperator:{
-        type: String,
-        enum: ['=', '!=', '>', '>=', '<', '<='],
-        required: function(){
-            return this.explorer == null;
-        }
-    },
     computationMoment: {
         type: Date,
         default: Date.now
@@ -165,6 +152,7 @@ var CubeSchema = new mongoose.Schema({
 
 DataWareHouseSchema.index({computationMoment: -1});
 CubeSchema.index({computationMoment: -1});
+CubeSchema.index({period: 'text'});
 
 module.exports.DataWareHouse = mongoose.model('DataWareHouse', DataWareHouseSchema);
 module.exports.Cube = mongoose.model('Cube', CubeSchema);
