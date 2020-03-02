@@ -11,7 +11,7 @@ var FinderModel = mongoose.model('Finders');
 
 exports.generate_mocker_data = function (req, res) {
     var explorer = {
-        id: {
+        _id: {
             function: function () {
                 return mongoose.Types.ObjectId();
             }
@@ -49,7 +49,7 @@ exports.generate_mocker_data = function (req, res) {
     };
 
     var manager = {
-        id: {
+        _id: {
             function: function () {
                 return mongoose.Types.ObjectId();
             }
@@ -87,7 +87,7 @@ exports.generate_mocker_data = function (req, res) {
     };
 
     var administrator = {
-        id: {
+        _id: {
             function: function () {
                 return mongoose.Types.ObjectId();
             }
@@ -125,7 +125,7 @@ exports.generate_mocker_data = function (req, res) {
     };
 
     var sponsor = {
-        id: {
+        _id: {
             function: function () {
                 return mongoose.Types.ObjectId();
             }
@@ -177,7 +177,7 @@ exports.generate_mocker_data = function (req, res) {
     };
 
     var trip = {
-        id: {
+        _id: {
             function: function () {
                 return mongoose.Types.ObjectId();
             }
@@ -257,7 +257,7 @@ exports.generate_mocker_data = function (req, res) {
         },
         creator: {
             hasOne: 'managers',
-            get: 'id'
+            get: '_id'
         },
         created: {
             function: function () {
@@ -276,11 +276,11 @@ exports.generate_mocker_data = function (req, res) {
     var application = {
         trip: {
             hasOne: 'trips',
-            get: 'id'
+            get: '_id'
         },
         explorer: {
             hasOne: 'explorers',
-            get: 'id'
+            get: '_id'
         },
         moment: {
             function: function () {
@@ -310,14 +310,14 @@ exports.generate_mocker_data = function (req, res) {
     var sponsorship = {
         sponsor: {
             hasOne: 'sponsors',
-            get: 'id'
+            get: '_id'
         },
         trips: {
             hasMany: 'trips',
             min: 0,
             max: 3,
             unique: true,
-            get: 'id'
+            get: '_id'
         },
         banner: {
             function: function () {
@@ -339,7 +339,7 @@ exports.generate_mocker_data = function (req, res) {
     var finder = {
         explorer: {
             hasOne: 'explorers',
-            get: 'id',
+            get: '_id',
             unique: true
         },
         trips: {
@@ -347,7 +347,7 @@ exports.generate_mocker_data = function (req, res) {
             min: 0,
             max: 10,
             unique: true,
-            get: 'id'
+            get: '_id'
         },
         defaultFinder: {
             faker: 'random.boolean',
