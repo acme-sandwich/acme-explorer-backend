@@ -41,7 +41,7 @@ var CronTime = require('cron').CronTime;
 //'*/30 * * * * *' cada 30 segundos
 //'*/10 * * * * *' cada 10 segundos
 //'* * * * * *' cada segundo
-var rebuildPeriod = '0 0 * * * *';  //Cada hora
+var rebuildPeriod = '*/30 * * * * *';  //Cada hora
 var computeDataWareHouseJob;
 
 exports.rebuildPeriod = function (req, res) {
@@ -56,6 +56,7 @@ exports.rebuildPeriod = function (req, res) {
 function createDataWareHouseJob() {
     computeDataWareHouseJob = new CronJob(rebuildPeriod, function () {
         var new_dataWareHouse = new DataWareHouse();
+        var new_cubes;
         console.log('Cron job submitted. Rebuild period: ' + rebuildPeriod);
         async.parallel([
             tripsPerManager,
@@ -63,7 +64,8 @@ function createDataWareHouseJob() {
             pricePerTrip,
             ratioApplicationsByStatus,
             averageFindersPrice,
-            topFindersKeywords
+            topFindersKeywords,
+            computeCube
         ], function (err, results) {
             if (err) {
                 console.log("Error computing datawarehouse: " + err);
@@ -74,14 +76,30 @@ function createDataWareHouseJob() {
                 new_dataWareHouse.ratioApplicationsPerStatus = results[3];
                 new_dataWareHouse.avgFinderPrices = results[4];
                 new_dataWareHouse.topFinderKeyWords = results[5];
+                //new_cubes = results[6];
 
                 new_dataWareHouse.save(function (err, datawarehouse) {
                     if (err) {
                         console.log("Error saving datawarehouse:  " + err);
                     } else {
-                        console.log("new DataWareHouse succesfully saved. Date: " + new Date());
+                        console.log("New DataWareHouse succesfully saved. Date: " + new Date());
                     }
                 });
+
+                /*for(var i = 0; i < new_cubes.length; i++){
+                    var new_cube = new Cube();
+                    new_cube.explorer = new_cubes[i].explorer;
+                    new_cube.period = new_cubes[i].period;
+                    new_cube.money = new_cubes[i].money;
+                    
+                    new_cube.save(function (err, cube){
+                        if(err){
+                            console.log("Error saving cube: " + err);
+                        }else{
+                            console.log("New Cube succesfully saved. Date: " + new Date());
+                        }
+                    });
+                }*/
             }
         });
     }, null, true, 'Europe/Madrid');
@@ -381,8 +399,76 @@ function getStartDateFromPeriod(periodString) {
 function createObjectId(elementId) {
     return mongoose.Types.ObjectId(elementId);
 }
-//hola zoy muy memé :) ¿y tú?
 
+function computeCube(callback){
+    for(var i = 1; i < 37; i++){
+        var period = "M";
+        if(i < 10){
+            period = period + "0" + i;
+        }else{
+            period = period + i;
+        }
+        var minDateRange = new Date();
+        minDateRange.setMonth(minDateRange.getMonth() - i);
+        Application.aggregate([
+            {
+                $match:{
+                    status: "ACCEPTED",
+                    updateMoment: {
+                        $gte: minDateRange,
+                    }
+                }
+            },
+            {$group: {
+                _id: "$explorer",
+                trips: {$push: "$trip"},
+            }},
+            {$project:{
+                _id: "$_id",
+                trips: "$trips",
+                period: period
+            }}
+        ], function(err, explorer_trips){
+            for(var j = 0; j < explorer_trips.length; j++){
+                var tripsIdArray = explorer_trips[j].trips;
+                var explorerId = explorer_trips[j]._id;
+                var periodCube = explorer_trips[j].period;
+                Trip.aggregate([
+                    {
+                        $match: {
+                            _id: { $in: tripsIdArray }
+                        }
+                    }, {
+                        $group: {
+                            _id: null,
+                            money: {$sum: "$price"}
+                        }
+                    }, {
+                        $project: {
+                            money: "$money",
+                            explorer: explorerId,
+                            periodCube: periodCube
+                        }
+                    }
+                ], function(err2, docs){
+                    var new_cube = new Cube();
+                    new_cube.explorer = docs[0].explorer;
+                    new_cube.money = docs[0].money;
+                    new_cube.period = docs[0].periodCube;
+
+                    new_cube.save(function (err, cubeSaved) {
+                        if (err) {
+                            console.log("Error saving cube:  " + err);
+                        } else {
+                            console.log("New Cube succesfully saved. Date: " + new Date());
+                        }
+                    });
+                });
+            }
+        });
+    }
+    callback(null, 1); 
+}
 
 // Returns the amount of money that explorer e has spent on trips during period p, which can be M01-M36 to 
 // denote any of the last 1-36 months or Y01-Y03 to denote any of the last three years
@@ -391,7 +477,47 @@ exports.cube = function (req, res) {
     // el explorer sea el explorer en cuestión y el status esté a ACCEPTED. Obtengo los trips.
     var explorerId = req.params.explorer;
     var periodRange = req.params.period;
-    var datesPeriod = getStartDateFromPeriod(periodRange);
+    var period = periodRange;
+    explorerId = mongoose.Types.ObjectId(explorerId);
+    if(periodRange.startsWith("Y")){
+        switch(periodRange){
+            case "Y01":
+                period = "M12";
+                break;
+            case "Y02":
+                period = "M24";
+                break;
+            case "Y03":
+                period = "M36";
+                break;
+            default:
+                period = "Y01";
+        }
+    }
+    console.log(explorerId);
+    console.log(period);
+    Cube.aggregate([
+        {
+            $match: {
+                explorer: explorerId,
+                period: period
+            }
+        }, {
+            $project:{
+                explorer: "$explorer",
+                money: "$money",
+                period: period
+            }
+        }
+    ], function(err, cubeReturned){
+        if(err){
+            res.status(404);
+        }else{
+            res.send(cubeReturned);
+        }
+    });
+
+    /*var datesPeriod = getStartDateFromPeriod(periodRange);
     if (datesPeriod.error) {
         res.status(400).send(datesPeriod.error);
     } else {
@@ -410,7 +536,7 @@ exports.cube = function (req, res) {
                     }
                 }
             },
-            { $group: { _id: null, trips: { $push: "$_id" } } },
+            { $group: { _id: null, trips: { $push: "$trip" } } },
             {
                 $project: {
                     _id: 0,
@@ -440,7 +566,7 @@ exports.cube = function (req, res) {
                 res.json(docs[0]);
             });
         });
-    }
+    }*/
 };
 
 exports.cube_explorers = function (req, res) {
