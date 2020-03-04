@@ -4,8 +4,9 @@ var mongoose = require('mongoose'),
 	Trip = mongoose.model('Trips'),
 	Application = mongoose.model('Applications');
 
+/** Returns all published trips. */
 exports.list_all_trips = function (req, res) {
-	Trip.find({}, function (err, trips) {
+	Trip.find({published: true}, function (err, trips) {
 		if (err) {
 			res.send(err);
 		}
@@ -15,11 +16,38 @@ exports.list_all_trips = function (req, res) {
 	});
 };
 
+/** Returns all trips created by the user, sorted by creation date.
+ *  They can be filtered by published or cancelled **/
+exports.list_created_trips = function (req, res) {
+	// TODO Actualizar forma de obtener id del usuario
+	var creator = req.query.creatorId;
+	var cancelled = req.query.cancelled;
+	var published = req.query.published;
+	var queryJson = {creator: creator};
+	if(cancelled != null){
+		queryJson['cancelled'] = cancelled;
+	}
+	if(published != null){
+		queryJson['published'] = published;
+	}
+	Trip.find(queryJson, null, {sort: '-created'}, function (err, trips) {
+		if (err) {
+			res.send(err);
+		}
+		else {
+			res.json(trips);
+		}
+	});
+};
+
+/** Returns all trips, filtering by keyword,  */
 exports.search_from_keyword = function (req, res) {
 	var keyword = req.query.keyword;
+	console.log(keyword);
+	var regex = new RegExp(keyword, "i");
 	if (keyword) { // Filter by keyword in title, description or ticker.
 		Trip.find({
-			$or: [{ ticker: /keyword/i }, { title: /keyword/i }, { description: /keyword/i }]
+			$or: [{ ticker: regex }, { title: regex }, { description: regex }]
 		}, function (err, trips) {
 			if (err) {
 				res.send(err);
