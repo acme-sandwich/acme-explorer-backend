@@ -43,7 +43,6 @@ exports.list_created_trips = function (req, res) {
 /** Returns all trips, filtering by keyword,  */
 exports.search_from_keyword = function (req, res) {
 	var keyword = req.query.keyword;
-	console.log(keyword);
 	var regex = new RegExp(keyword, "i");
 	if (keyword) { // Filter by keyword in title, description or ticker.
 		Trip.find({
