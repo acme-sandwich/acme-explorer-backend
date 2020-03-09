@@ -12,6 +12,8 @@ var express = require('express'),
   DataWareHouseTools = require('./api/controllers/datawarehouseController'),
   Cube = require('./api/models/datawarehouseModel').Cube,
   bodyParser = require('body-parser');
+var admin = require('firebase-admin');
+var serviceAccount = require("./acme-sandwich-explorer-firebase-adminsdk-9cn2y-a845a0ffa2");
 
 // MongoDB URI building
 const mongoDBHostname = process.env.mongoDBHostname || 'acme-explorer-xlwrw.mongodb.net';
@@ -35,6 +37,22 @@ mongoose.connect(mongoDBURI, {
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Accept, idToken" //ojo, que si metemos un parametro propio por la cabecera hay que declararlo aquí para que no de el error CORS
+    );
+    //res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
+    next();
+});
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://acme-sandwich-explorer.firebaseio.com"
+});
 
 var routesActors = require('./api/routes/actorRoutes');
 var routesTrips = require('./api/routes/tripRoutes'); 

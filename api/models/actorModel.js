@@ -36,7 +36,10 @@ var ActorSchema = new Schema({
   banned:{
     type: Boolean,
     default: false
-  }
+  },
+  customToken: {
+    type: String
+  },
 }, { strict: false });
 
 ActorSchema.index({banned: 1});
