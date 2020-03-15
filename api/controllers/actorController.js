@@ -21,7 +21,7 @@ exports.create_an_actor = function (req, res) {
   console.log(new_actor);
   new_actor.save(function (err, actor) {
     if (err) {
-      res.send(err);
+      res.status(400).send(err);
       console.log(err);
     }
     else {
@@ -35,7 +35,9 @@ exports.read_an_actor = function (req, res) {
     if (err) {
       res.send(err);
     }
-    else {
+    else if(actor == null) {
+      res.status(404).send("Actor not found");
+    }else{
       res.json(actor);
     }
   });
@@ -43,11 +45,9 @@ exports.read_an_actor = function (req, res) {
 
 exports.update_an_actor = function (req, res) {
   Actor.findOneAndUpdate({ _id: req.params.actorId }, req.body, { new: true }, function (err, actor) {
-    console.log(req.params.actorId);
     if (err) {
       res.send(err);
-    }
-    else {
+    } else {
       res.json(actor);
     }
   });
@@ -83,7 +83,6 @@ exports.login_an_actor = async function (req, res) {
     }
     else {
       // Make sure the password is correct
-      //console.log('En actor Controller pass: '+password);
       actor.verifyPassword(password, async function (err, isMatch) {
         if (err) {
           res.send(err);
@@ -119,16 +118,20 @@ exports.update_a_verified_actor = function (req, res) {
       res.send(err);
     }
     else {
-      console.log('actor: ' + actor);
+      //console.log('actor: ' + actor);
       var idToken = req.headers['idtoken'];//WE NEED the FireBase custom token in the req.header['idToken']... it is created by FireBase!!
       var authenticatedUserId = await authController.getUserId(idToken);
+      //console.log(req.body);
       if (authenticatedUserId == req.params.actorId) {
+        console.log("voy a lanzar el findoneandupdate");
         Actor.findOneAndUpdate({ _id: req.params.actorId }, req.body, { new: true }, function (err, actor) {
           if (err) {
             res.send(err);
           }
           else {
+            console.log("todo OK");
             res.json(actor);
+            console.log("todo OK");
           }
         });
       } else {
