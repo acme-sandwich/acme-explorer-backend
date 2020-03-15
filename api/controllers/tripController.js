@@ -3,10 +3,11 @@
 var mongoose = require('mongoose'),
 	Trip = mongoose.model('Trips'),
 	Application = mongoose.model('Applications');
+var authController = require('./authController');
 
 /** Returns all published trips. */
 exports.list_all_trips = function (req, res) {
-	Trip.find({published: true}, function (err, trips) {
+	Trip.find({ published: true }, function (err, trips) {
 		if (err) {
 			res.send(err);
 		}
@@ -19,18 +20,18 @@ exports.list_all_trips = function (req, res) {
 /** Returns all trips created by the user, sorted by creation date.
  *  They can be filtered by published or cancelled **/
 exports.list_created_trips = function (req, res) {
-	// TODO Actualizar forma de obtener id del usuario
-	var creator = req.query.creatorId;
+	var idToken = req.headers['idtoken'];
+	var authenticatedUserId = await authController.getUserId(idToken);
 	var cancelled = req.query.cancelled;
 	var published = req.query.published;
-	var queryJson = {creator: creator};
-	if(cancelled != null){
+	var queryJson = { creator: authenticatedUserId };
+	if (cancelled != null) {
 		queryJson['cancelled'] = cancelled;
 	}
-	if(published != null){
+	if (published != null) {
 		queryJson['published'] = published;
 	}
-	Trip.find(queryJson, null, {sort: '-created'}, function (err, trips) {
+	Trip.find(queryJson, null, { sort: '-created' }, function (err, trips) {
 		if (err) {
 			res.send(err);
 		}
@@ -94,6 +95,28 @@ exports.update_a_trip = function (req, res) {
 	});
 };
 
+exports.update_a_trip_v2 = function (req, res) {
+	Trip.findById(req.params.tripId, async function (err, trip) {
+		if (err) {
+			res.send(err)
+		} else {
+			var idToken = req.headers['idtoken'];
+			var authenticatedUserId = await authController.getUserId(idToken);
+			if (authenticatedUserId == trip.creator) {
+				Trip.findOneAndUpdate({ _id: req.params.tripId }, req.body, { new: true }, function (err, trip2) {
+					if (err) {
+						res.send(err);
+					} else {
+						res.json(trip2);
+					}
+				});
+			} else {
+				res.status(403).send("Only the creator can update trips");
+			}
+		}
+	})
+};
+
 exports.delete_a_trip = function (req, res) {
 	Trip.remove({ _id: req.params.tripId }, function (err, trip) {
 		if (err) {
@@ -103,6 +126,29 @@ exports.delete_a_trip = function (req, res) {
 			res.json({ message: 'Trip successfully deleted' });
 		}
 	});
+};
+
+exports.delete_a_trip_v2 = function (req, res) {
+	Trip.findById(req.params.tripId, async function (err, trip) {
+		if (err) {
+			res.send(err)
+		} else {
+			var idToken = req.headers['idtoken'];
+			var authenticatedUserId = await authController.getUserId(idToken);
+			if (authenticatedUserId == trip.creator) {
+				Trip.remove({ _id: req.params.tripId }, function (err, trip) {
+					if (err) {
+						res.send(err);
+					}
+					else {
+						res.json({ message: 'Trip successfully deleted' });
+					}
+				});
+			} else {
+				res.status(403).send("Only the creator can update trips");
+			}
+		}
+	})
 };
 
 exports.publish_a_trip = function (req, res) {
@@ -133,7 +179,85 @@ exports.publish_a_trip = function (req, res) {
 	});
 };
 
+exports.publish_a_trip_v2 = function (req, res) {
+	Trip.findById(req.params.tripId, function (err, trip) {
+		if (err) {
+			res.send(err);
+		}
+		else if (trip == null) {
+			res.status(404).send('Trip not found');
+		}
+		else {
+			var idToken = req.headers['idtoken'];
+			var authenticatedUserId = await authController.getUserId(idToken);
+			if(authenticatedUserId != trip.creator){
+				res.status(403).send("Only the creator can publish trips");
+			} else if (trip.cancelled) {
+				res.status(409).send('Cannot publish a cancelled trip');
+			} else if (trip.published) {
+				res.status(409).send('Trip is already published');
+			} else {
+				var publishedJson = { 'published': true };
+				Trip.findOneAndUpdate({ _id: req.params.tripId }, publishedJson, { new: true }, function (err, trip) {
+					if (err) {
+						res.send(err);
+					}
+					else {
+						res.json(trip);
+					}
+				});
+			}
+		}
+	});
+};
+
 exports.cancel_a_trip = function (req, res) {
+	Trip.findById(req.params.tripId, function (err, trip) {
+		if (err) {
+			res.send(err);
+		}
+		else if (trip == null) {
+			res.status(404).send('Trip not found');
+		}
+		else {
+			var idToken = req.headers['idtoken'];
+			var authenticatedUserId = await authController.getUserId(idToken);
+			if(authenticatedUserId != trip.creator){
+				res.status(403).send("Only the creator can cancel trips");
+			} 
+			else if (trip.cancelled) {
+				res.status(409).send('Trip is already cancelled');
+			} else if (!trip.published) {
+				res.status(409).send('Cannot cancel a not published trip');
+			} else if (trip.startDate < new Date()) {
+				res.status(409).send('Cannot cancel a trip that has started');
+			} else {
+				Application.find({
+					trip: trip._id, status: "ACCEPTED"
+				}, function (err, applications) {
+					if (err) {
+						res.send(err);
+					}
+					else if (applications.length > 0) {
+						res.status(409).send('Cannot cancel a trip that has accepted applications');
+					} else {
+						var cancelledJson = { 'cancelled': true, 'reason': req.body.reason };
+						Trip.findOneAndUpdate({ _id: req.params.tripId }, cancelledJson, { new: true }, function (err, trip) {
+							if (err) {
+								res.send(err);
+							}
+							else {
+								res.json(trip);
+							}
+						});
+					}
+				});
+			}
+		}
+	});
+};
+
+exports.cancel_a_trip_v2 = function (req, res) {
 	Trip.findById(req.params.tripId, function (err, trip) {
 		if (err) {
 			res.send(err);
