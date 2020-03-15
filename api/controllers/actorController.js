@@ -140,45 +140,22 @@ exports.update_a_verified_actor = function (req, res) {
 
 };
 
-// Application
-exports.list_all_applications = function (req, res) {
+exports.ban_an_actor = function(req, res) {
+  Actor.findOneAndUpdate({_id: req.params.actorId}, { $set: {"banned": "true"}}, {new: true}, function(err, actor) {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json({ message: 'Actor has been banned successfully' });
+    }
+  });
 };
 
-exports.create_application = function (req, res) {
-};
-
-exports.update_an_application = function (req, res) {
-};
-
-exports.delete_an_application = function (req, res) {
-};
-
-// Find trip
-exports.find_trip = function (req, res) {
-};
-
-// Organize trip
-exports.list_all_organized_trips = function (req, res) {
-};
-
-exports.organize_trip = function (req, res) {
-};
-
-exports.update_an_organized_trip = function (req, res) {
-};
-
-exports.delete_an_organized_trip = function (req, res) {
-};
-
-// Sponsorship
-exports.list_all_sponsorships = function (req, res) {
-};
-
-exports.make_new_sponsorship = function (req, res) {
-};
-
-exports.update_an_sponsorship = function (req, res) {
-};
-
-exports.delete_an_sponsorship = function (req, res) {
-};
+exports.unban_an_actor = function(req, res) {
+  Actor.findOneAndUpdate({_id: req.params.actorId}, { $set: {"banned": "false"}}, {new: true}, function(err, actor) {
+    if (err) {
+      res.send(err);
+    } else {
+      res.json({ message: 'Actor has been unbanned successfully' });
+    }
+  });
+}

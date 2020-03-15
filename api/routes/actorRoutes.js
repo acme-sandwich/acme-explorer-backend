@@ -22,9 +22,15 @@ module.exports = function(app) {
 	 * @type get put
 	 * @url /v2/actors/:actorId
   */  
- app.route('/api/v2/actors/:actorId')
- .get(actors.read_an_actor)
- .put(authController.verifyUser(["ADMINISTRATOR",
+  app.route('/api/v2/actors/:actorId')
+    .get(actors.read_an_actor)
+    .put(authController.verifyUser(["ADMINISTRATOR",
                                  "MANAGER", "EXPLORER",
                                  "SPONSOR"]),actors.update_a_verified_actor) //Consumer y clerk no puede modificar la info de otro consumer/clerk
+
+  app.route('/api/v1/actors/ban/:actorId')
+    .put(actors.ban_an_actor);
+
+  app.route('/api/v1/actors/unban/:actorId')
+    .put(actors.unban_an_actor);
 };
