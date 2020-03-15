@@ -26,7 +26,7 @@ module.exports = function(app) {
     .get(actors.read_an_actor)
     .put(authController.verifyUser(["ADMINISTRATOR",
                                  "MANAGER", "EXPLORER",
-                                 "SPONSOR"]),actors.update_a_verified_actor) //Consumer y clerk no puede modificar la info de otro consumer/clerk
+                                 "SPONSOR"]),actors.update_a_verified_actor);
 
   app.route('/api/v1/actors/ban/:actorId')
     .put(actors.ban_an_actor);

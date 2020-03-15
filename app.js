@@ -62,6 +62,7 @@ var routesApplications = require('./api/routes/applicationRoutes');
 var routesConfigurations = require('./api/routes/configurationRoutes');
 var routesStorage = require('./api/routes/storageRoutes');
 var routesDatawarehouse = require('./api/routes/datawarehouseRoutes');
+var routesLogin = require('./api/routes/loginRoutes');
 
 
 routesActors(app);
@@ -72,6 +73,7 @@ routesApplications(app);
 routesConfigurations(app);
 routesStorage(app);
 routesDatawarehouse(app);
+routesLogin(app);
 
 
 console.log("Connecting DB to: " + mongoDBURI);
