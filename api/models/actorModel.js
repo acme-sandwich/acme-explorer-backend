@@ -39,7 +39,7 @@ var ActorSchema = new Schema({
   },
   customToken: {
     type: String
-  },
+  }
 }, { strict: false });
 
 ActorSchema.index({banned: 1});
