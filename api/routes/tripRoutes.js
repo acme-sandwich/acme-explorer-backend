@@ -1,6 +1,7 @@
 'use strict';
 module.exports = function (app) {
     var trips = require('../controllers/tripController');
+    var authController = require('../controllers/authController');
 
     app.route('/api/v1/trips')
         .get(trips.list_all_trips)
