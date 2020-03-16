@@ -65,7 +65,7 @@ exports.read_a_sponsorship = function (req, res) {
   });
 };
 
-exports.read_a_sponsorship_mine = function (req, res) {
+exports.read_a_sponsorship_mine = async function (req, res) {
   var idToken = req.headers['idtoken'];
   var authenticatedUserId = await authController.getUserId(idToken);
   Sponsorship.findById(req.params.sponsorshipId, async function (err, sponsorship) {
@@ -89,7 +89,7 @@ exports.pay_a_sponsorship = function (req, res) {
   });
 };
 
-exports.pay_a_sponsorship_v2 = function (req, res) {
+exports.pay_a_sponsorship_v2 = async function (req, res) {
   var idToken = req.headers['idtoken'];
   var authenticatedUserId = await authController.getUserId(idToken);
   Sponsorship.findById(req.params.sponsorshipId, function(error, spsh){

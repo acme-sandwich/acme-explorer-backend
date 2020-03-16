@@ -249,7 +249,7 @@ exports.delete_a_finder = function(req, res) {
     });
 };
 
-exports.delete_a_finder_v2 = function(req, res) {
+exports.delete_a_finder_v2 = async function(req, res) {
   var idToken = req.headers['idtoken'];
   var authenticatedUserId = await authController.getUserId(idToken);
   Finder.findById(req.params.finderId, function(error, finder1){
