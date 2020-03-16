@@ -30,6 +30,38 @@ exports.create_an_actor = function (req, res) {
   });
 };
 
+exports.create_a_manager = function (req, res) {
+  var new_actor = new Actor(req.body);
+  if(! new_actor.status.includes("MANAGER")) res.status(400).send("Actor must be manager");
+  else{
+    new_actor.save(function (err, actor) {
+      if (err) {
+        res.status(400).send(err);
+        console.log(err);
+      }
+      else {
+        res.json(actor);
+      }
+    });
+  }
+};
+
+exports.create_an_admin = function (req, res) {
+  var new_actor = new Actor(req.body);
+  if(! new_actor.status.includes("ADMINISTRATOR")) res.status(400).send("Actor must be administrator");
+  else{
+    new_actor.save(function (err, actor) {
+      if (err) {
+        res.status(400).send(err);
+        console.log(err);
+      }
+      else {
+        res.json(actor);
+      }
+    });
+  }
+};
+
 exports.read_an_actor = function (req, res) {
   Actor.findById(req.params.actorId, function (err, actor) {
     if (err) {
@@ -70,6 +102,26 @@ exports.delete_an_actor = function (req, res) {
       res.json({ message: 'Actor successfully deleted' });
     }
   });
+};
+
+exports.delete_an_actor_v2 = async function (req, res) {
+  var idToken = req.headers['idtoken'];
+  var authenticatedUserId = await authController.getUserId(idToken);
+  Actor.findById(req.params.actorId, function(error, actor){
+    if(error) res.send(error);
+    else if(actor == null) res.status(404).send("Actor not found");
+    else if(actor._id != authenticatedUserId) res.status(401).send("Only the actor can delete himself");
+    else{
+      Actor.remove({ _id: req.params.actorId }, function (err, actor) {
+        if (err) {
+          res.send(err);
+        }
+        else {
+          res.json({ message: 'Actor successfully deleted' });
+        }
+      });
+    }
+  })
 };
 
 exports.login_an_actor = async function (req, res) {
