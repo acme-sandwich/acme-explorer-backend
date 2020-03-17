@@ -5,7 +5,7 @@ const chaiHttp = require("chai-http");
 const { expect } = chai;
 chai.use(chaiHttp);
 var actorId = '';
-describe("API Testing", () => {
+describe("Actor tests", () => {
   it("Get actors", done => {
     chai
       .request(app)
@@ -17,7 +17,6 @@ describe("API Testing", () => {
         else done();
       });
   });
-
 
   it("Post actor", done => {
     chai
@@ -55,7 +54,6 @@ describe("API Testing", () => {
       .request(app)
       .get("/api/v1/actors/9e714482b1d63b27181d4989")
       .end((err, res) => {
-          console.log(res.body);
         expect(res).to.have.status(404);
         if (err) done(err);
         else done();
@@ -68,7 +66,6 @@ describe("API Testing", () => {
       .put("/api/v1/actors/" + actorId)
       .send({"role":["EXPLORER"],"name":"UpdatedExplorerName1","surname":"UpdatedExplorerSurname1","email":"explorer@fakemail.com","password":"$2b$05$fMPnmaTx6doE/ISNc/I1leKTQcwAegVmzMP6WtKZ2xKeFP89kOxvO","phone":"+34123456789","address":"myAddress"})
       .end((err, res) => {
-        console.log(res.body);
         expect(res).to.have.status(200);
         expect(res.body._id).to.equal(actorId);
         expect(res.body.name).to.equal('UpdatedExplorerName1');
@@ -85,7 +82,6 @@ describe("API Testing", () => {
       .put("/api/v1/actors/9e714482b1d63b27181d4989")
       .send({"role":["EXPLORER"],"name":"UpdatedExplorerName1","surname":"UpdatedExplorerSurname1","email":"explorer@fakemail.com","password":"$2b$05$fMPnmaTx6doE/ISNc/I1leKTQcwAegVmzMP6WtKZ2xKeFP89kOxvO","phone":"+34123456789","address":"myAddress"})
       .end((err, res) => {
-        console.log(res.body);
         expect(res).to.have.status(404);
         if (err) done(err);
         else done();
@@ -105,6 +101,18 @@ describe("API Testing", () => {
       });
   });
 
+  it("Ban non-existing actor with ID", done => {
+    chai
+      .request(app)
+      .put("/api/v1/actors/unban/9e714482b1d63b27181d4989")
+      .send({"status": ["ADMINISTRATOR"]})
+      .end((err, res) => {
+        expect(res).to.have.status(404);
+        if (err) done(err);
+        else done();
+      });
+  });
+
   it("Unban actor with ID", done => {
     chai
       .request(app)
@@ -113,6 +121,18 @@ describe("API Testing", () => {
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect(res.body.message).to.equal('Actor has been unbanned successfully');
+        if (err) done(err);
+        else done();
+      });
+  });
+  
+  it("Unban non-existing actor with ID", done => {
+    chai
+      .request(app)
+      .put("/api/v1/actors/unban/9e714482b1d63b27181d4989")
+      .send({"status": ["ADMINISTRATOR"]})
+      .end((err, res) => {
+        expect(res).to.have.status(404);
         if (err) done(err);
         else done();
       });
@@ -129,4 +149,15 @@ describe("API Testing", () => {
         else done();
       });
   });
+
+  /*it("Delete non-existing actor with ID", done => {
+    chai
+      .request(app)
+      .delete("/api/v1/actors/9e714482b1d63b27181d4989")
+      .end((err, res) => {
+        expect(res).to.have.status(404);
+        if (err) done(err);
+        else done();
+      });
+  });*/
 });
