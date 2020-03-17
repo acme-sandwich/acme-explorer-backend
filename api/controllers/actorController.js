@@ -202,21 +202,34 @@ exports.update_a_verified_actor = function (req, res) {
 };
 
 exports.ban_an_actor = function (req, res) {
-  Actor.findOneAndUpdate({ _id: req.params.actorId }, { $set: { "banned": "true" } }, { new: true }, function (err, actor) {
-    if (err) {
-      res.send(err);
-    } else {
-      res.json({ message: 'Actor has been banned successfully' });
-    }
-  });
+  var selected_actor = new Actor(req.body);
+  if(selected_actor.status.includes("ADMINISTRATOR")) {
+    Actor.findOneAndUpdate({ _id: req.params.actorId }, { $set: { "banned": "true" } }, { new: true }, function (err, actor) {
+      if (err) {
+        res.send(err);
+      } else {
+        res.json({ message: 'Actor has been banned successfully' });
+      }
+    });
+  } else {
+    res.status(403); //Auth error
+    res.send('You must be an administrator to ban an actor');
+  }
+  
 };
 
 exports.unban_an_actor = function (req, res) {
-  Actor.findOneAndUpdate({ _id: req.params.actorId }, { $set: { "banned": "false" } }, { new: true }, function (err, actor) {
-    if (err) {
-      res.send(err);
-    } else {
-      res.json({ message: 'Actor has been unbanned successfully' });
-    }
-  });
+  var selected_actor = new Actor(req.body);
+  if(selected_actor.status.includes("ADMINISTRATOR")) {
+    Actor.findOneAndUpdate({ _id: req.params.actorId }, { $set: { "banned": "false" } }, { new: true }, function (err, actor) {
+      if (err) {
+        res.send(err);
+      } else {
+        res.json({ message: 'Actor has been unbanned successfully' });
+      }
+    });
+  } else {
+    res.status(403); //Auth error
+    res.send('You must be an administrator to unban an actor');
+  }
 }
