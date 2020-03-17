@@ -11,7 +11,15 @@ var express = require('express'),
   DataWareHouse = require('./api/models/datawarehouseModel').DataWareHouse,
   DataWareHouseTools = require('./api/controllers/datawarehouseController'),
   Cube = require('./api/models/datawarehouseModel').Cube,
-  bodyParser = require('body-parser');
+  bodyParser = require('body-parser'),
+  https = require('https'),
+  fs = require('fs');
+
+const options = {
+    key: fs.readFileSync('./keys/server.key'),
+    cert: fs.readFileSync('./keys/server.cert')
+};
+
 var admin = require('firebase-admin');
 var serviceAccount = require("./acme-sandwich-explorer-firebase-adminsdk-9cn2y-a845a0ffa2");
 
@@ -78,9 +86,7 @@ routesLogin(app);
 
 console.log("Connecting DB to: " + mongoDBURI);
 mongoose.connection.on("open", function (err, conn) {
-    app.listen(port, function () {
-        console.log('ACME-Explorer RESTful API server started on: ' + port);
-    });
+    https.createServer(options, app).listen(port);
 });
 
 mongoose.connection.on("error", function (err, conn) {
