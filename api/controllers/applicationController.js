@@ -206,3 +206,129 @@ exports.delete_an_application_v2 = async function (req, res) {
     }
   });
 };
+
+exports.cancel_an_application = function (req, res) {
+  Application.findById(req.params.applicationId, function(err, application){
+    if (err) {
+      res.send(err);
+    } else if (application == null){
+      res.status(404).send('Application not found');
+    } else {
+      Application.findOneAndUpdate({ _id: req.params.applicationId }, { $set: { "status": "CANCELLED" } }, { new: true }, function (err, actor) {
+        if (err) {
+          res.send(err);
+        } else {
+          res.json({ message: 'Application has been cancelled successfully' });
+        }
+      });
+    }
+  });
+}
+
+exports.cancel_an_application_v2 = async function (req, res) {
+    Application.findById(req.params.applicationId, function(err, application){
+      if (err) {
+        res.send(err);
+      } else if (application == null){
+        res.status(404).send('Application not found');
+      } else if (application.status == 'PENDING' || application.status == 'ACCEPTED') {
+        var idToken = req.headers['idtoken'];
+			  var authenticatedUserId = await authController.getUserId(idToken);
+			  if(authenticatedUserId != application.trip.creator){
+				  res.status(403).send("Only the trip creator can modify applications");
+			  } else {
+          Application.findOneAndUpdate({ _id: req.params.applicationId }, { $set: { "status": "CANCELLED" } }, { new: true }, function (err, actor) {
+            if (err) {
+              res.send(err);
+            } else {
+              res.json({ message: 'Application has been cancelled successfully' });
+            }
+          });
+        }
+      }
+    });
+}
+
+exports.reject_an_application = function (req, res) {
+  Application.findById(req.params.applicationId, function(err, application){
+    if (err) {
+      res.send(err);
+    } else if (application == null){
+      res.status(404).send('Application not found');
+    } else if (application.status == 'PENDING') {
+        Application.findOneAndUpdate({ _id: req.params.applicationId }, { $set: { "status": "REJECTED" } }, { new: true }, function (err, actor) {
+          if (err) {
+            res.send(err);
+          } else {
+            res.json({ message: 'Application has been rejected successfully' });
+          }
+        });
+    }
+  });
+}
+
+exports.reject_an_application_v2 = async function (req, res) {
+  Application.findById(req.params.applicationId, function(err, application){
+    if (err) {
+      res.send(err);
+    } else if (application == null){
+      res.status(404).send('Application not found');
+    } else if (application.status == 'PENDING') {
+      var idToken = req.headers['idtoken'];
+      var authenticatedUserId = await authController.getUserId(idToken);
+      if(authenticatedUserId != application.trip.creator){
+        res.status(403).send("Only the trip creator can modify applications");
+      } else {
+        Application.findOneAndUpdate({ _id: req.params.applicationId }, { $set: { "status": "REJECTED" } }, { new: true }, function (err, actor) {
+          if (err) {
+            res.send(err);
+          } else {
+            res.json({ message: 'Application has been rejected successfully' });
+          }
+        });
+      }
+    }
+  });
+}
+
+exports.due_an_application = function (req, res) {
+  Application.findById(req.params.applicationId, function(err, application){
+    if (err) {
+      res.send(err);
+    } else if (application == null){
+      res.status(404).send('Application not found');
+    } else if (application.status == 'PENDING'){
+        Application.findOneAndUpdate({ _id: req.params.applicationId }, { $set: { "status": "DUE" } }, { new: true }, function (err, actor) {
+          if (err) {
+            res.send(err);
+          } else {
+            res.json({ message: 'Application has been due successfully' });
+          }
+        });
+      }
+  });
+}
+
+exports.due_an_application_v2 = async function (req, res) {
+  Application.findById(req.params.applicationId, function(err, application){
+    if (err) {
+      res.send(err);
+    } else if (application == null){
+      res.status(404).send('Application not found');
+    } else if (application.status == 'PENDING'){
+      var idToken = req.headers['idtoken'];
+      var authenticatedUserId = await authController.getUserId(idToken);
+      if(authenticatedUserId != application.trip.creator){
+        res.status(403).send("Only the trip creator can modify applications");
+      } else {
+        Application.findOneAndUpdate({ _id: req.params.applicationId }, { $set: { "status": "DUE" } }, { new: true }, function (err, actor) {
+          if (err) {
+            res.send(err);
+          } else {
+            res.json({ message: 'Application has been due successfully' });
+          }
+        });
+      }
+    }
+  });
+}
