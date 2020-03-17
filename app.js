@@ -88,3 +88,5 @@ mongoose.connection.on("error", function (err, conn) {
 });
 
 DataWareHouseTools.createDataWareHouseJob();
+
+module.exports = app;
