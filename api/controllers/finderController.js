@@ -200,38 +200,46 @@ exports.update_a_finder_v2 = function(req, res) {
         var authenticatedUserId = await authController.getUserId(idToken);
         if(finder.explorer != authenticatedUserId) res.status(401).send("A explorer can only update his own finder");
         else{
-          var query = {};
-        if (req.body.keyWord != null) {
-          var regex = new RegExp(req.body.keyWord, 'i');
-          query['$or'] = [{ ticker: regex }, { title: regex }, { description: regex }];
-        }
-        if (req.body.minPrice != null && req.body.maxPrice == null) query['price'] = {'$gte': req.body.minPrice};
-        if (req.body.maxPrice != null && req.body.minPrice == null) query['price'] = {'$lte': req.body.maxPrice};
-        if (req.body.minPrice != null && req.body.maxPrice != null) query['price'] = {'$gte': req.body.minPrice, '$lte': req.body.maxPrice};
-        if (req.body.dateStart != null && req.body.dateEnd == null) query['startDate'] = {'$gte': req.body.dateStart};
-        if (req.body.dateEnd != null && req.body.dateStart == null) query['startDate'] = {'$lte': req.body.dateEnd};
-        if (req.body.dateStart != null && req.body.dateEnd != null) query['startDate'] = {'$gte': req.body.dateStart, '$lte': req.body.dateEnd};
-        Configurations.find({}, (err, configs) => {
-          if (err) {
-            res.send(err);
-          } else if (configs.length == 0) {
-            res.status(500).send('Configuration not defined');
-          } else {
-            var maxTrips = configs[0].resultsNumberFinder;
-            Trip.find(query).limit(maxTrips).exec((err, trips) => {
-              req.body['trips'] = trips;
-              console.log(trips.length);
-              Finder.findOneAndUpdate({_id: req.params.finderId}, req.body, {new: true}, function(err, finder) {
-                if (err){
-                    res.send(err);
+          Configurations.find({}, (err, configs) => {
+            if (err) {
+              res.send(err);
+            } else if (configs.length == 0) {
+              res.status(500).send('Configuration not defined');
+            } else {
+              var updateTime = new Date(finder.moment.getTime() + configs[0].resultsTimeFinder*60*60*1000);
+              var nowTime = new Date();
+              if (nowTime < updateTime && req.body.keyWord == finder.keyWord && req.body.minPrice == finder.minPrice &&
+                req.body.maxPrice == finder.maxPrice && req.body.dateStart == finder.dateStart && req.body.dateEnd == finder.dateEnd) {
+                  res.json(finder);
+              } else {
+                var query = {};
+                if (req.body.keyWord != null) {
+                  var regex = new RegExp(req.body.keyWord, 'i');
+                  query['$or'] = [{ ticker: regex }, { title: regex }, { description: regex }];
                 }
-                else{
-                    res.json(req.body);
-                }
-              });
-            });
-          }
-        });
+                if (req.body.minPrice != null && req.body.maxPrice == null) query['price'] = {'$gte': req.body.minPrice};
+                if (req.body.maxPrice != null && req.body.minPrice == null) query['price'] = {'$lte': req.body.maxPrice};
+                if (req.body.minPrice != null && req.body.maxPrice != null) query['price'] = {'$gte': req.body.minPrice, '$lte': req.body.maxPrice};
+                if (req.body.dateStart != null && req.body.dateEnd == null) query['startDate'] = {'$gte': req.body.dateStart};
+                if (req.body.dateEnd != null && req.body.dateStart == null) query['startDate'] = {'$lte': req.body.dateEnd};
+                if (req.body.dateStart != null && req.body.dateEnd != null) query['startDate'] = {'$gte': req.body.dateStart, '$lte': req.body.dateEnd};
+                var maxTrips = configs[0].resultsNumberFinder;
+                Trip.find(query).limit(maxTrips).exec((err, trips) => {
+                  req.body['trips'] = trips;
+                  req.body['moment'] = nowTime;
+                  Finder.findOneAndUpdate({_id: req.params.finderId}, req.body, {new: true}, function(err, finder) {
+                    if (err){
+                      res.send(err);
+                    }
+                    else{
+                      finder.trips = trips;
+                      res.json(finder);
+                    }
+                  });
+                });
+              }
+            }
+          });
         }     
       }
     });
