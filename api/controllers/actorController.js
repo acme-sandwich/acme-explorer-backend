@@ -32,7 +32,7 @@ exports.create_an_actor = function (req, res) {
 
 exports.create_a_manager = function (req, res) {
   var new_actor = new Actor(req.body);
-  if(! new_actor.status.includes("MANAGER")) res.status(400).send("Actor must be manager");
+  if(! new_actor.status.includes("ADMINISTRATOR")) res.status(400).send("Actor must be administrator");
   else{
     new_actor.save(function (err, actor) {
       if (err) {
