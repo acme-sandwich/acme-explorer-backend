@@ -4,8 +4,10 @@ module.exports = function (app) {
 
     app.route('/api/v1/configurations')
         .get(configuration.list_all_configurations)
-        .get(configuration.get_current_configuration)
         .post(configuration.create_a_configuration);
+
+    app.route('/api/v1/configurations/current')
+        .get(configuration.get_current_configuration);
 
     app.route('/api/v1/configurations/:configurationId')
         .put(configuration.update_configuration)
