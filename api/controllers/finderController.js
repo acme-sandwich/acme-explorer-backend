@@ -117,8 +117,10 @@ exports.read_a_finder = function(req, res) {
     if (err){
       res.send(err);
     }
-    else{
+    else if (finder) {
       res.json(finder);
+    } else {
+      res.status(404).send("Finder not found");
     }
   });
 };
@@ -128,11 +130,13 @@ exports.read_a_finder_v2 = function(req, res) {
     if (err){
       res.send(err);
     }
-    else{
+    else if (finder) {
       var idToken = req.headers['idtoken'];
       var authenticatedUserId = await authController.getUserId(idToken);
       if(finder.explorer != authenticatedUserId) res.status(401).send("A explorer can only read his own finder");
       res.json(finder);
+    } else {
+      res.status(404).send("Finder not found");
     }
   });
 };
@@ -143,7 +147,7 @@ exports.update_a_finder = function(req, res) {
     Finder.findById(req.params.finderId, function(err, finder) {
       if (err) {
         res.send(err);
-      } else {
+      } else if (finder) {
         Configurations.find({}, (err, configs) => {
           if (err) {
             res.send(err);
@@ -184,6 +188,8 @@ exports.update_a_finder = function(req, res) {
             }
           }
         });
+      } else {
+        res.status(404).send("Finder not found");
       }
     });
   }
@@ -195,7 +201,7 @@ exports.update_a_finder_v2 = function(req, res) {
     Finder.findById(req.params.finderId, async function(err, finder) {
       if (err) {
         res.send(err);
-      } else {
+      } else if (finder) {
         var idToken = req.headers['idtoken'];
         var authenticatedUserId = await authController.getUserId(idToken);
         if(finder.explorer != authenticatedUserId) res.status(401).send("A explorer can only update his own finder");
@@ -241,6 +247,8 @@ exports.update_a_finder_v2 = function(req, res) {
             }
           });
         }     
+      } else {
+        res.status(404).send("Finder not found");
       }
     });
   }

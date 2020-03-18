@@ -5,7 +5,7 @@ const chaiHttp = require("chai-http");
 const { expect } = chai;
 chai.use(chaiHttp);
 var configurationId = '';
-describe("Actor tests", () => {
+describe("Configuration tests", () => {
   it("Get configurations", done => {
     chai
       .request(app)
