@@ -28,5 +28,5 @@ module.exports = function(app) {
     .put(authController.verifyUser(["SPONSOR"]),sponsorships.pay_a_sponsorship_v2);
   
   app.route('/api/v1/trips/:tripId/sponsorships')
-    .get(sponsorships.list_all_sponsorships);
+    .get(sponsorships.list_trip_sponsorships);
 };

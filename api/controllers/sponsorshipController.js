@@ -1,7 +1,8 @@
 'use strict';
 /*---------------SPONSORSHIP----------------------*/
 var mongoose = require('mongoose'),
-  Sponsorship = mongoose.model('Sponsorships');
+  Sponsorship = mongoose.model('Sponsorships'),
+  Trip = mongoose.model('Trips');
 
 exports.list_all_sponsorships = function (req, res) {
   Sponsorship.find({}, function (err, sponsorships) {
@@ -13,6 +14,25 @@ exports.list_all_sponsorships = function (req, res) {
     }
   });
 };
+
+exports.list_trip_sponsorships = function (req, res) {
+  Trip.findById(req.params.tripId, (err, trip) => {
+    if (err) {
+      res.send(err);
+    } else if (trip) {
+      Sponsorship.find({trips: req.params.tripId}, function (err, sponsorships) {
+        if (err) {
+          res.send(err);
+        }
+        else {
+          res.json(sponsorships);
+        }
+      });
+    } else {
+      res.status(404).send("Trip not found");
+    }
+  });
+}
 
 exports.list_my_sponsorships = async function (req, res) {
   var idToken = req.headers['idtoken'];
@@ -59,8 +79,10 @@ exports.read_a_sponsorship = function (req, res) {
     if (err) {
       res.send(err);
     }
-    else {
+    else if (sponsorship) {
       res.json(sponsorship);
+    } else {
+      res.status(404).send("Sponsorship not found");
     }
   });
 };
@@ -79,12 +101,20 @@ exports.read_a_sponsorship_mine = async function (req, res) {
 };
 
 exports.pay_a_sponsorship = function (req, res) {
-  Sponsorship.findOneAndUpdate({ _id: req.params.sponsorshipId }, { $set: { "payed": "true" } }, { new: true }, function (err, sponsorship) {
+  Sponsorship.findById(req.params.sponsorshipId, (err, sponsorship) => {
     if (err) {
-      res.status(500).send(err);
-    }
-    else {
-      res.json(sponsorship);
+      res.send(err);
+    } else if (sponsorship) {
+      Sponsorship.findOneAndUpdate({ _id: req.params.sponsorshipId }, { $set: { "payed": "true" } }, { new: true }, function (err, sponsorship) {
+        if (err) {
+          res.status(500).send(err);
+        }
+        else {
+          res.json(sponsorship);
+        }
+      });
+    } else {
+      res.status(404).send("Sponsorship not found");
     }
   });
 };
@@ -110,12 +140,20 @@ exports.pay_a_sponsorship_v2 = async function (req, res) {
 };
 
 exports.update_a_sponsorship = function (req, res) {
-  Sponsorship.findOneAndUpdate({ _id: req.params.sponsorshipId }, req.body, { new: true }, function (err, sponsorship) {
+  Sponsorship.findById(req.params.sponsorshipId, (err, sponsorship) => {
     if (err) {
       res.send(err);
-    }
-    else {
-      res.json(sponsorship);
+    } else if (sponsorship) {
+      Sponsorship.findOneAndUpdate({ _id: req.params.sponsorshipId }, req.body, { new: true }, function (err, sponsorship) {
+        if (err) {
+          res.send(err);
+        }
+        else {
+          res.json(sponsorship);
+        }
+      });
+    } else {
+      res.status(404).send("Sponsorship not found");
     }
   });
 };
@@ -141,12 +179,20 @@ exports.update_a_sponsorship_v2 = async function (req, res) {
 };
 
 exports.delete_a_sponsorship = function (req, res) {
-  Sponsorship.remove({ _id: req.params.sponsorshipId }, function (err, sponsorship) {
+  Sponsorship.findById(req.params.sponsorshipId, (err, sponsorship) => {
     if (err) {
       res.send(err);
-    }
-    else {
-      res.json({ message: 'Sponsorship successfully deleted' });
+    } else if (sponsorship) {
+      Sponsorship.remove({ _id: req.params.sponsorshipId }, function (err, sponsorship) {
+        if (err) {
+          res.send(err);
+        }
+        else {
+          res.json({ message: 'Sponsorship successfully deleted' });
+        }
+      });
+    } else {
+      res.status(404).send("Sponsorship not found");
     }
   });
 };
