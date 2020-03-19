@@ -88,52 +88,6 @@ describe("Actor tests", () => {
       });
   });
 
-  it("Ban actor with ID", done => {
-    chai
-      .request(app)
-      .put("/api/v1/actors/ban/" + actorId)
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body.message).to.equal('Actor has been banned successfully');
-        if (err) done(err);
-        else done();
-      });
-  });
-
-  it("Ban non-existing actor with ID", done => {
-    chai
-      .request(app)
-      .put("/api/v1/actors/ban/9e714482b1d63b27181d4989")
-      .end((err, res) => {
-        expect(res).to.have.status(404);
-        if (err) done(err);
-        else done();
-      });
-  });
-
-  it("Unban actor with ID", done => {
-    chai
-      .request(app)
-      .put("/api/v1/actors/unban/" + actorId)
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body.message).to.equal('Actor has been unbanned successfully');
-        if (err) done(err);
-        else done();
-      });
-  });
-  
-  it("Unban non-existing actor with ID", done => {
-    chai
-      .request(app)
-      .put("/api/v1/actors/unban/9e714482b1d63b27181d4989")
-      .end((err, res) => {
-        expect(res).to.have.status(404);
-        if (err) done(err);
-        else done();
-      });
-  });
-
   it("Delete actor with ID", done => {
     chai
       .request(app)

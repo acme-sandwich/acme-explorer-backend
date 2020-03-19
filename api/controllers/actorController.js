@@ -207,7 +207,7 @@ exports.update_a_verified_actor = function (req, res) {
 
 };
 
-exports.ban_an_actor = function (req, res) {
+exports.ban_an_actor = async function (req, res) {
   var idToken = req.headers['idtoken'];
   var authenticatedUserId = await authController.getUserId(idToken);
   Actor.findById(req.params.actorId, async function (err, actor) {
@@ -232,7 +232,7 @@ exports.ban_an_actor = function (req, res) {
   });
 };
 
-exports.unban_an_actor = function (req, res) {
+exports.unban_an_actor = async function (req, res) {
   var idToken = req.headers['idtoken'];
   var authenticatedUserId = await authController.getUserId(idToken);
   Actor.findById(req.params.actorId, async function (err, actor) {
