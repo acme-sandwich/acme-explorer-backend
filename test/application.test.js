@@ -45,7 +45,7 @@ describe("Application tests", () => {
       });
   });
 
-  /*it("Get non-existing application with ID", done => {
+  it("Get non-existing application with ID", done => {
     chai
       .request(app)
       .get("/api/v1/applications/9e714482b1d63b27181d4989")
@@ -54,7 +54,7 @@ describe("Application tests", () => {
         if (err) done(err);
         else done();
       });
-  });*/
+  });
 
   it("Update application with ID", done => {
     chai
@@ -70,7 +70,7 @@ describe("Application tests", () => {
       });
   });
 
-  /*it("Update non-existing application with ID", done => {
+  it("Update non-existing application with ID", done => {
     chai
       .request(app)
       .put("/api/v1/applications/9e714482b1d63b27181d4989")
@@ -80,7 +80,7 @@ describe("Application tests", () => {
         if (err) done(err);
         else done();
       });
-  });*/
+  });
 
   it("Get trip applications", done => {
     chai
@@ -211,7 +211,7 @@ describe("Application tests", () => {
       });
   });
 
-  /*it("Delete non-existing application with ID", done => {
+  it("Delete non-existing application with ID", done => {
     chai
       .request(app)
       .delete("/api/v1/applications/9e714482b1d63b27181d4989")
@@ -220,5 +220,5 @@ describe("Application tests", () => {
         if (err) done(err);
         else done();
       });
-  });*/
+  });
 });

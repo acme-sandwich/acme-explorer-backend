@@ -65,7 +65,7 @@ describe("Configuration tests", () => {
       });
   });
 
-  /*it("Update non-existing configuration with ID", done => {
+  it("Update non-existing configuration with ID", done => {
     chai
       .request(app)
       .put("/api/v1/configurations/9e714482b1d63b27181d4989")
@@ -75,7 +75,7 @@ describe("Configuration tests", () => {
         if (err) done(err);
         else done();
       });
-  });*/
+  });
 
   it("Delete configuration with ID", done => {
     chai
@@ -89,7 +89,7 @@ describe("Configuration tests", () => {
       });
   });
 
-  /*it("Delete non-existing configuration with ID", done => {
+  it("Delete non-existing configuration with ID", done => {
     chai
       .request(app)
       .delete("/api/v1/configurations/9e714482b1d63b27181d4989")
@@ -98,5 +98,5 @@ describe("Configuration tests", () => {
         if (err) done(err);
         else done();
       });
-  });*/
+  });
 });

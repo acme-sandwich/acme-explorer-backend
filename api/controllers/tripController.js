@@ -75,22 +75,25 @@ exports.create_a_trip = function (req, res) {
 
 exports.read_a_trip = function (req, res) {
 	Trip.findById(req.params.tripId, function (err, trip) {
-		if (err) {
-			res.send(err);
-		}
-		else {
-			res.json(trip);
-		}
+		if (err) res.send(err);
+		else if (trip == null) res.status(404).send("Trip not found");
+		else res.json(trip);
 	});
 };
 
 exports.update_a_trip = function (req, res) {
-	Trip.findOneAndUpdate({ _id: req.params.tripId }, req.body, { new: true }, function (err, trip) {
-		if (err) {
-			res.send(err);
-		}
+	Trip.findById(req.params.tripId, function (err, trip) {
+		if (err) res.send(err);
+		else if (trip == null) res.status(404).send("Trip not found");
 		else {
-			res.json(trip);
+			Trip.findOneAndUpdate({ _id: req.params.tripId }, req.body, { new: true }, function (err, trip) {
+				if (err) {
+					res.send(err);
+				}
+				else {
+					res.json(trip);
+				}
+			});
 		}
 	});
 };
@@ -118,12 +121,18 @@ exports.update_a_trip_v2 = async function (req, res) {
 };
 
 exports.delete_a_trip = function (req, res) {
-	Trip.remove({ _id: req.params.tripId }, function (err, trip) {
-		if (err) {
-			res.send(err);
-		}
+	Trip.findById(req.params.tripId, function (err, trip) {
+		if (err) res.send(err);
+		else if (trip == null) res.status(404).send("Trip not found");
 		else {
-			res.json({ message: 'Trip successfully deleted' });
+			Trip.remove({ _id: req.params.tripId }, function (err, trip) {
+				if (err) {
+					res.send(err);
+				}
+				else {
+					res.json({ message: 'Trip successfully deleted' });
+				}
+			});
 		}
 	});
 };
@@ -190,7 +199,7 @@ exports.publish_a_trip_v2 = function (req, res) {
 		else {
 			var idToken = req.headers['idtoken'];
 			var authenticatedUserId = await authController.getUserId(idToken);
-			if(authenticatedUserId != trip.creator){
+			if (authenticatedUserId != trip.creator) {
 				res.status(403).send("Only the creator can publish trips");
 			} else if (trip.cancelled) {
 				res.status(409).send('Cannot publish a cancelled trip');
@@ -263,9 +272,9 @@ exports.cancel_a_trip_v2 = function (req, res) {
 		else {
 			var idToken = req.headers['idtoken'];
 			var authenticatedUserId = await authController.getUserId(idToken);
-			if(authenticatedUserId != trip.creator){
+			if (authenticatedUserId != trip.creator) {
 				res.status(403).send("Only the creator can cancel trips");
-			} 
+			}
 			else if (trip.cancelled) {
 				res.status(409).send('Trip is already cancelled');
 			} else if (!trip.published) {

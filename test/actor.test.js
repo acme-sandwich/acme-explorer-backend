@@ -88,11 +88,10 @@ describe("Actor tests", () => {
       });
   });
 
-  /*it("Ban actor with ID", done => {
+  it("Ban actor with ID", done => {
     chai
       .request(app)
-      .put("/api/v1/actors/unban/" + actorId)
-      .send({"status": ["ADMINISTRATOR"]})
+      .put("/api/v1/actors/ban/" + actorId)
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect(res.body.message).to.equal('Actor has been banned successfully');
@@ -104,8 +103,7 @@ describe("Actor tests", () => {
   it("Ban non-existing actor with ID", done => {
     chai
       .request(app)
-      .put("/api/v1/actors/unban/9e714482b1d63b27181d4989")
-      .send({"status": ["ADMINISTRATOR"]})
+      .put("/api/v1/actors/ban/9e714482b1d63b27181d4989")
       .end((err, res) => {
         expect(res).to.have.status(404);
         if (err) done(err);
@@ -117,7 +115,6 @@ describe("Actor tests", () => {
     chai
       .request(app)
       .put("/api/v1/actors/unban/" + actorId)
-      .send({"status": ["ADMINISTRATOR"]})
       .end((err, res) => {
         expect(res).to.have.status(200);
         expect(res.body.message).to.equal('Actor has been unbanned successfully');
@@ -130,13 +127,12 @@ describe("Actor tests", () => {
     chai
       .request(app)
       .put("/api/v1/actors/unban/9e714482b1d63b27181d4989")
-      .send({"status": ["ADMINISTRATOR"]})
       .end((err, res) => {
         expect(res).to.have.status(404);
         if (err) done(err);
         else done();
       });
-  });*/
+  });
 
   it("Delete actor with ID", done => {
     chai
@@ -150,7 +146,7 @@ describe("Actor tests", () => {
       });
   });
 
-  /*it("Delete non-existing actor with ID", done => {
+  it("Delete non-existing actor with ID", done => {
     chai
       .request(app)
       .delete("/api/v1/actors/9e714482b1d63b27181d4989")
@@ -159,5 +155,5 @@ describe("Actor tests", () => {
         if (err) done(err);
         else done();
       });
-  });*/
+  });
 });

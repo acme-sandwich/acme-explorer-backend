@@ -55,7 +55,7 @@ describe("Trip tests", () => {
       });
   });
 
-  /*it("Get non-existing trip with ID", done => {
+  it("Get non-existing trip with ID", done => {
     chai
       .request(app)
       .get("/api/v1/trips/9e714482b1d63b27181d4989")
@@ -64,7 +64,7 @@ describe("Trip tests", () => {
         if (err) done(err);
         else done();
       });
-  });*/
+  });
 
   it("Update trip with ID", done => {
     chai
@@ -84,7 +84,7 @@ describe("Trip tests", () => {
       });
   });
 
-  /*it("Update non-existing trip with ID", done => {
+  it("Update non-existing trip with ID", done => {
     chai
       .request(app)
       .put("/api/v1/trips/9e714482b1d63b27181d4989")
@@ -94,7 +94,7 @@ describe("Trip tests", () => {
         if (err) done(err);
         else done();
       });
-  });*/
+  });
 
   it("Publish trip with ID", done => {
     chai
@@ -156,7 +156,7 @@ describe("Trip tests", () => {
       });
   });
 
-  /*it("Delete non-existing trip with ID", done => {
+  it("Delete non-existing trip with ID", done => {
     chai
       .request(app)
       .delete("/api/v1/trips/9e714482b1d63b27181d4989")
@@ -165,5 +165,5 @@ describe("Trip tests", () => {
         if (err) done(err);
         else done();
       });
-  });*/
+  });
 });

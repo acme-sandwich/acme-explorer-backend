@@ -94,14 +94,20 @@ exports.update_an_actor = function (req, res) {
 };
 
 exports.delete_an_actor = function (req, res) {
-  Actor.remove({ _id: req.params.actorId }, function (err, actor) {
-    if (err) {
-      res.send(err);
+  Actor.findById(req.params.actorId, function(err, actor){
+    if(err) res.send(err);
+    else if(actor == null) res.status(404).send("Actor not found");
+    else{
+      Actor.remove({ _id: req.params.actorId }, function (err, actor) {
+        if (err) {
+          res.send(err);
+        }
+        else {
+          res.json({ message: 'Actor successfully deleted' });
+        }
+      });
     }
-    else {
-      res.json({ message: 'Actor successfully deleted' });
-    }
-  });
+  }); 
 };
 
 exports.delete_an_actor_v2 = async function (req, res) {
@@ -179,7 +185,7 @@ exports.update_a_verified_actor = function (req, res) {
     }
     else {
       console.log('actor: ' + actor);
-      var idToken = req.headers['idtoken'];//WE NEED the FireBase custom token in the req.header['idToken']... it is created by FireBase!!
+      var idToken = req.headers['idtoken'];
       var authenticatedUserId = await authController.getUserId(idToken);
       if (authenticatedUserId == req.params.actorId) {
         Actor.findOneAndUpdate({ _id: req.params.actorId }, req.body, { new: true }, function (err, actor) {
@@ -202,34 +208,33 @@ exports.update_a_verified_actor = function (req, res) {
 };
 
 exports.ban_an_actor = function (req, res) {
-  var selected_actor = new Actor(req.body);
-  if(selected_actor.status.includes("ADMINISTRATOR")) {
-    Actor.findOneAndUpdate({ _id: req.params.actorId }, { $set: { "banned": "true" } }, { new: true }, function (err, actor) {
-      if (err) {
-        res.send(err);
-      } else {
-        res.json({ message: 'Actor has been banned successfully' });
-      }
-    });
-  } else {
-    res.status(403); //Auth error
-    res.send('You must be an administrator to ban an actor');
-  }
-  
+  Actor.findById(req.params.actorId, function(err, actor){
+    if(err) res.send(err);
+    else if(actor == null) res.status(404).send("Actor not found");
+    else{
+      Actor.findOneAndUpdate({ _id: req.params.actorId }, { $set: { "banned": "true" } }, { new: true }, function (err, actor) {
+        if (err) {
+          res.send(err);
+        } else {
+          res.json({ message: 'Actor has been banned successfully' });
+        }
+      });
+    }
+  }); 
 };
 
 exports.unban_an_actor = function (req, res) {
-  var selected_actor = new Actor(req.body);
-  if(selected_actor.status.includes("ADMINISTRATOR")) {
-    Actor.findOneAndUpdate({ _id: req.params.actorId }, { $set: { "banned": "false" } }, { new: true }, function (err, actor) {
-      if (err) {
-        res.send(err);
-      } else {
-        res.json({ message: 'Actor has been unbanned successfully' });
-      }
-    });
-  } else {
-    res.status(403); //Auth error
-    res.send('You must be an administrator to unban an actor');
-  }
-}
+  Actor.findById(req.params.actorId, function(err, actor){
+    if(err) res.send(err);
+    else if(actor == null) res.status(404).send("Actor not found");
+    else{
+      Actor.findOneAndUpdate({ _id: req.params.actorId }, { $set: { "banned": "false" } }, { new: true }, function (err, actor) {
+        if (err) {
+          res.send(err);
+        } else {
+          res.json({ message: 'Actor has been unbanned successfully' });
+        }
+      });
+    }
+  }); 
+};
