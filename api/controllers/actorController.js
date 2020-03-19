@@ -208,33 +208,51 @@ exports.update_a_verified_actor = function (req, res) {
 };
 
 exports.ban_an_actor = function (req, res) {
-  Actor.findById(req.params.actorId, function(err, actor){
-    if(err) res.send(err);
-    else if(actor == null) res.status(404).send("Actor not found");
-    else{
-      Actor.findOneAndUpdate({ _id: req.params.actorId }, { $set: { "banned": "true" } }, { new: true }, function (err, actor) {
-        if (err) {
-          res.send(err);
-        } else {
-          res.json({ message: 'Actor has been banned successfully' });
-        }
-      });
+  var idToken = req.headers['idtoken'];
+  var authenticatedUserId = await authController.getUserId(idToken);
+  Actor.findById(req.params.actorId, async function (err, actor) {
+    if (err) {
+      res.send(err);
+    } else if (actor == null) {
+      res.status(404).send('That actor does not exist');
+    } else {
+      if(authenticatedUserId.status.includes("ADMINISTRATOR")) {
+        Actor.findOneAndUpdate({ _id: req.params.actorId }, { $set: { "banned": "true" } }, { new: true }, function (err, actor) {
+          if (err) {
+            res.send(err);
+          } else {
+            res.json({ message: 'Actor has been unbanned successfully' });
+          }
+        });
+      } else {
+        res.status(403);
+        res.send('You must be an administrator to unban an actor');
+      }
     }
-  }); 
+  });
 };
 
 exports.unban_an_actor = function (req, res) {
-  Actor.findById(req.params.actorId, function(err, actor){
-    if(err) res.send(err);
-    else if(actor == null) res.status(404).send("Actor not found");
-    else{
-      Actor.findOneAndUpdate({ _id: req.params.actorId }, { $set: { "banned": "false" } }, { new: true }, function (err, actor) {
-        if (err) {
-          res.send(err);
-        } else {
-          res.json({ message: 'Actor has been unbanned successfully' });
-        }
-      });
+  var idToken = req.headers['idtoken'];
+  var authenticatedUserId = await authController.getUserId(idToken);
+  Actor.findById(req.params.actorId, async function (err, actor) {
+    if (err) {
+      res.send(err);
+    } else if (actor == null) {
+      res.status(404).send('That actor does not exist');
+    } else {
+      if(authenticatedUserId.status.includes("ADMINISTRATOR")) {
+        Actor.findOneAndUpdate({ _id: req.params.actorId }, { $set: { "banned": "false" } }, { new: true }, function (err, actor) {
+          if (err) {
+            res.send(err);
+          } else {
+            res.json({ message: 'Actor has been unbanned successfully' });
+          }
+        });
+      } else {
+        res.status(403);
+        res.send('You must be an administrator to unban an actor');
+      }
     }
-  }); 
+  });
 };
