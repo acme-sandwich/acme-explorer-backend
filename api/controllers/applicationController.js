@@ -69,7 +69,6 @@ exports.list_my_applications = async function (req, res) {
 
 exports.create_an_application = function (req, res) {
   var new_application = new Application(req.body);
-  console.log(new_application);
   new_application.save(function (err, application) {
     if (err) {
       res.send(err);

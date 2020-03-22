@@ -45,8 +45,8 @@ module.exports = function(app) {
     .put(actors.unban_an_actor);
 
   app.route('/api/v2/actors/ban/:actorId')
-    .put(authController.verifyUser(["ADMINISTRATOR"]),actors.ban_an_actor);
+    .put(authController.verifyUser(["ADMINISTRATOR"]),actors.ban_an_actor_v2);
 
   app.route('/api/v2/actors/unban/:actorId')
-    .put(authController.verifyUser(["ADMINISTRATOR"]),actors.unban_an_actor);
+    .put(authController.verifyUser(["ADMINISTRATOR"]),actors.unban_an_actor_v2);
 };
