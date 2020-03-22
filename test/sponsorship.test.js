@@ -8,16 +8,45 @@ const { expect } = chai;
 chai.use(chaiHttp);
 var tripId = '';
 var sponsorshipId = '';
+var tripCreated = false;
 describe("Sponsorship tests", () => {
   before(done => {
     Trip.find({}, (err, trips) => {
       if (err) done(err);
-      else {
+      else if (trips.length > 0) {
         tripId = trips[0]._id;
         done();
+      } else {
+        var new_trip = new Trip({
+          "title": "NewTrip",
+          "description": "Testing trip",
+          "requirements": "Some requirements",
+          "startDate": "2022-04-10T14:30:10.123Z",
+          "endDate": "2022-05-15T15:31:11.321Z",
+          "creator":"9e714482b1d63b27181d4989"
+        });
+        new_trip.save((err, trip) => {
+          if (err) done(err);
+          else {
+            tripId = trip._id;
+            tripCreated = true;
+            done();
+          }
+        });
       }
     });
   });
+
+  after(done => {
+    if (tripCreated) {
+      Trip.findByIdAndRemove(tripId, (err) => {
+        if (err) done(err);
+        else done();
+      })
+    } else {
+      done();
+    }
+  })
 
   it("Get sponsorships", done => {
     chai
