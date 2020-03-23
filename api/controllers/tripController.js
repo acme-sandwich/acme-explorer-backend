@@ -75,7 +75,7 @@ exports.create_a_trip = function (req, res) {
 			res.send(err);
 		}
 		else {
-			res.status(201).json(trip);
+			res.json(trip);
 		}
 	});
 };
