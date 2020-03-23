@@ -69,7 +69,6 @@ exports.list_my_applications = async function (req, res) {
 
 exports.create_an_application = function (req, res) {
   var new_application = new Application(req.body);
-  console.log(new_application);
   new_application.save(function (err, application) {
     if (err) {
       res.send(err);
@@ -82,12 +81,9 @@ exports.create_an_application = function (req, res) {
 
 exports.read_an_application = function (req, res) {
   Application.findById(req.params.applicationId, function (err, application) {
-    if (err) {
-      res.send(err);
-    }
-    else {
-      res.json(application);
-    }
+    if (err) res.send(err);
+    else if(application == null) res.status(404).send("Application not found");
+    else res.json(application);
   });
 };
 
@@ -114,12 +110,18 @@ exports.read_an_application_v2 = async function (req, res) {
 };
 
 exports.update_an_application = function (req, res) {
-  Application.findOneAndUpdate({ _id: req.params.applicationId }, req.body, { new: true }, function (err, application) {
-    if (err) {
-      res.send(err);
-    }
-    else {
-      res.json(application);
+  Application.findById(req.params.applicationId, function(err, app){
+    if(err) res.send(err);
+    else if(app == null) res.status(404).send("Application not found");
+    else{
+      Application.findOneAndUpdate({ _id: req.params.applicationId }, req.body, { new: true }, function (err, application) {
+        if (err) {
+          res.send(err);
+        }
+        else {
+          res.json(application);
+        }
+      });
     }
   });
 };
@@ -161,14 +163,20 @@ exports.update_an_application_v2 = async function (req, res) {
 };
 
 exports.delete_an_application = function (req, res) {
-  Application.remove({ _id: req.params.applicationId }, function (err, application) {
-    if (err) {
-      res.send(err);
+  Application.findById(req.params.applicationId, function(err, app){
+    if(err) res.send(err);
+    else if(app == null) res.status(404).send("Application not found");
+    else{
+      Application.remove({ _id: req.params.applicationId }, function (err, application) {
+        if (err) {
+          res.send(err);
+        }
+        else {
+          res.json({ message: 'Application successfully deleted' });
+        }
+      });
     }
-    else {
-      res.json({ message: 'Application successfully deleted' });
-    }
-  });
+  })
 };
 
 exports.delete_an_application_v2 = async function (req, res) {
@@ -226,8 +234,8 @@ exports.cancel_an_application = function (req, res) {
 }
 
 exports.cancel_an_application_v2 = async function (req, res) {
-    var idToken = req.headers['idtoken'];
-		var authenticatedUserId = await authController.getUserId(idToken);
+  var idToken = req.headers['idtoken'];
+  var authenticatedUserId = await authController.getUserId(idToken);
     Application.findById(req.params.applicationId, function(err, application){
       if (err) {
         res.send(err);

@@ -70,7 +70,8 @@ ActorSchema.pre('findOneAndUpdate', async function(callback){
   const docToUpdate = await this.model.findOne(this.getQuery());
   const oldPassword = docToUpdate.password;
   const newPassword = this._update.password;
-  if (oldPassword !== newPassword) {
+  
+  if (oldPassword !== newPassword && newPassword != undefined) { // Añadido comprobación para los métodos ban y unban
     var salt = bcrypt.genSaltSync(5);
     var hash = bcrypt.hashSync(newPassword, salt);
     this._update.password = hash;
