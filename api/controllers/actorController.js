@@ -18,7 +18,6 @@ exports.list_all_actors = function (req, res) {
 
 exports.create_an_actor = function (req, res) {
   var new_actor = new Actor(req.body);
-  console.log(new_actor);
   new_actor.save(function (err, actor) {
     if (err) {
       res.status(400).send(err);
@@ -204,10 +203,27 @@ exports.update_a_verified_actor = function (req, res) {
       }
     }
   });
-
 };
 
-exports.ban_an_actor = async function (req, res) {
+exports.ban_an_actor = function (req, res) {
+  Actor.findById(req.params.actorId, function (err, actor) {
+    if (err) {
+      res.send(err);
+    } else if (actor == null) {
+      res.status(404).send('That actor does not exist');
+    } else {
+      Actor.findOneAndUpdate({ _id: req.params.actorId }, { $set: { "banned": "true" } }, { new: true }, function (err, actor) {
+        if (err) {
+          res.send(err);
+        } else {
+          res.json({ message: 'Actor has been banned successfully' });
+        }
+      });
+    }
+  });
+};
+
+exports.ban_an_actor_v2 = async function (req, res) {
   var idToken = req.headers['idtoken'];
   var authenticatedUserId = await authController.getUserId(idToken);
   Actor.findById(req.params.actorId, async function (err, actor) {
@@ -221,18 +237,36 @@ exports.ban_an_actor = async function (req, res) {
           if (err) {
             res.send(err);
           } else {
-            res.json({ message: 'Actor has been unbanned successfully' });
+            res.json({ message: 'Actor has been banned successfully' });
           }
         });
       } else {
         res.status(403);
-        res.send('You must be an administrator to unban an actor');
+        res.send('You must be an administrator to ban an actor');
       }
     }
   });
 };
 
-exports.unban_an_actor = async function (req, res) {
+exports.unban_an_actor = function (req, res) {
+  Actor.findById(req.params.actorId, function (err, actor) {
+    if (err) {
+      res.send(err);
+    } else if (actor == null) {
+      res.status(404).send('That actor does not exist');
+    } else {
+      Actor.findOneAndUpdate({ _id: req.params.actorId }, { $set: { "banned": "false" } }, { new: true }, function (err, actor) {
+        if (err) {
+          res.send(err);
+        } else {
+          res.json({ message: 'Actor has been unbanned successfully' });
+        }
+      });      
+    }
+  });
+};
+
+exports.unban_an_actor_v2 = async function (req, res) {
   var idToken = req.headers['idtoken'];
   var authenticatedUserId = await authController.getUserId(idToken);
   Actor.findById(req.params.actorId, async function (err, actor) {
