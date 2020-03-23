@@ -15,17 +15,17 @@ var ActorSchema = new Schema({
   email: {
     type: String,
     required: 'Kindly enter the actor email',
-    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']    
+    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
   },
   password: {
     type: String,
-    minlength:5,
+    minlength: 5,
     required: 'Kindly enter the actor password'
   },
   phone: {
     type: String,
   },
-  address:{
+  address: {
     type: String
   },
   role: [{
@@ -33,14 +33,17 @@ var ActorSchema = new Schema({
     required: 'Kindly enter the user role(s)',
     enum: ['ADMINISTRATOR', 'MANAGER', 'EXPLORER', 'SPONSOR']
   }],
-  banned:{
+  banned: {
     type: Boolean,
     default: false
+  },
+  customToken: {
+    type: String
   }
 }, { strict: false });
 
-ActorSchema.index({banned: 1});
-ActorSchema.index({role: 'text'});
+ActorSchema.index({ banned: 1 });
+ActorSchema.index({ role: 'text' });
 
 var hashPassword = function (password) {
   return new Promise(function (resolve, reject) {
@@ -63,20 +66,26 @@ ActorSchema.pre('save', async function (callback) {
   })
 });
 
-ActorSchema.pre("findOneAndUpdate", async function (callback) {
-  var actor = this;
-  var password = this.getUpdate().password;
-  hashPassword(password).then(function (myhash) {
-    actor.update({ password: myhash })
+ActorSchema.pre('findOneAndUpdate', async function(callback){
+  const docToUpdate = await this.model.findOne(this.getQuery());
+  const oldPassword = docToUpdate.password;
+  const newPassword = this._update.password;
+  
+  if (oldPassword !== newPassword && newPassword != undefined) { // Añadido comprobación para los métodos ban y unban
+    var salt = bcrypt.genSaltSync(5);
+    var hash = bcrypt.hashSync(newPassword, salt);
+    this._update.password = hash;
     callback();
-  })
+  }else{
+    callback();
+  }
 });
 
-ActorSchema.methods.verifyPassword = function(password, cb) {
-    bcrypt.compare(password, this.password, function(err, isMatch) {
-    console.log('verifying password in actorModel: '+password);
+ActorSchema.methods.verifyPassword = function (password, cb) {
+  bcrypt.compare(password, this.password, function (err, isMatch) {
+    console.log('verifying password in actorModel: ' + password);
     if (err) return cb(err);
-    console.log('iMatch: '+isMatch);
+    console.log('iMatch: ' + isMatch);
     cb(null, isMatch);
   });
 };
