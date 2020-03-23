@@ -74,7 +74,7 @@ exports.create_an_application = function (req, res) {
       res.send(err);
     }
     else {
-      res.json(application);
+      res.status(201).json(application);
     }
   });
 };

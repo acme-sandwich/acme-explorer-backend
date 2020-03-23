@@ -24,7 +24,7 @@ exports.create_an_actor = function (req, res) {
       console.log(err);
     }
     else {
-      res.json(actor);
+      res.status(201).json(actor);
     }
   });
 };
@@ -39,7 +39,7 @@ exports.create_a_manager = function (req, res) {
         console.log(err);
       }
       else {
-        res.json(actor);
+        res.status(201).json(actor);
       }
     });
   }
@@ -55,7 +55,7 @@ exports.create_an_admin = function (req, res) {
         console.log(err);
       }
       else {
-        res.json(actor);
+        res.status(201).json(actor);
       }
     });
   }

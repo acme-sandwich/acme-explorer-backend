@@ -52,7 +52,7 @@ exports.create_a_finder = function(req, res) {
                   res.send(err);
                 }
                 else{
-                  res.json(finder);
+                  res.status(201).json(finder);
                 }
               });
             });
@@ -101,7 +101,7 @@ exports.create_a_finder_v2 = async function(req, res) {
                   res.send(err);
                 }
                 else{
-                  res.json(finder);
+                  res.status(201).json(finder);
                 }
               });
             });

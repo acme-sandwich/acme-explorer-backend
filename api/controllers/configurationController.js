@@ -21,7 +21,7 @@ exports.create_a_configuration = function (req, res) {
       res.send(err);
     }
     else {
-      res.json(configuration);
+      res.status(201).json(configuration);
     }
   });
 };

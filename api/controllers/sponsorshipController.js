@@ -54,7 +54,7 @@ exports.create_a_sponsorship = function (req, res) {
       res.send(err);
     }
     else {
-      res.json(sponsorship);
+      res.status(201).json(sponsorship);
     }
   });
 };
@@ -69,7 +69,7 @@ exports.create_a_sponsorship_v2 = async function (req, res) {
       res.send(err);
     }
     else {
-      res.json(sponsorship);
+      res.status(201).json(sponsorship);
     }
   });
 };
