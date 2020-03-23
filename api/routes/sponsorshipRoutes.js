@@ -26,6 +26,12 @@ module.exports = function(app) {
 
   app.route('/api/v2/sponsorships/:sponsorshipId/pay')
     .put(authController.verifyUser(["SPONSOR"]),sponsorships.pay_a_sponsorship_v2);
+
+  app.route('/api/v1/actors/:actorId/sponsorships/:sponsorshipId/pay/:tripId')
+    .put(sponsorships.pay_a_sponsorship_with_trip);
+
+  app.route('/api/v2/sponsorships/:sponsorshipId/pay/:tripId')
+    .put(authController.verifyUser(["SPONSOR"]),sponsorships.pay_a_sponsorship_with_trip_v2);
   
   app.route('/api/v1/trips/:tripId/sponsorships')
     .get(sponsorships.list_trip_sponsorships);

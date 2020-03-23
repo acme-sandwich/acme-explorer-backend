@@ -151,6 +151,53 @@ describe("Sponsorship tests", () => {
       });
   });
 
+  it("Pay sponsorship with ID and trip", done => {
+    chai
+      .request(app)
+      .put("/api/v1/actors/9e714482b1d63b27181d4989/sponsorships/" + sponsorshipId + "/pay/" + tripId)
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body._id).to.equal(sponsorshipId);
+        expect(res.body.payed).to.equal(true);
+        expect(res.body.trips).to.include(tripId.toString());
+        if (err) done(err);
+        else done();
+      });
+  });
+
+  it("Pay sponsorship with ID and trip twice", done => {
+    chai
+      .request(app)
+      .put("/api/v1/actors/9e714482b1d63b27181d4989/sponsorships/" + sponsorshipId + "/pay/" + tripId)
+      .end((err, res) => {
+        expect(res).to.have.status(409);
+        if (err) done(err);
+        else done();
+      });
+  });
+
+  it("Pay non-existing sponsorship with ID and trip", done => {
+    chai
+      .request(app)
+      .put("/api/v1/actors/9e714482b1d63b27181d4989/sponsorships/9e714482b1d63b27181d4989/pay/" + tripId)
+      .end((err, res) => {
+        expect(res).to.have.status(404);
+        if (err) done(err);
+        else done();
+      });
+  });
+
+  it("Pay sponsorship with ID and non-existing trip", done => {
+    chai
+      .request(app)
+      .put("/api/v1/actors/9e714482b1d63b27181d4989/sponsorships/" + sponsorshipId + "/pay/9e714482b1d63b27181d4989")
+      .end((err, res) => {
+        expect(res).to.have.status(404);
+        if (err) done(err);
+        else done();
+      });
+  });
+
   it("Get trip sponsorships", done => {
     chai
       .request(app)
