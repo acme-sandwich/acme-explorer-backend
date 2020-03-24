@@ -414,7 +414,7 @@ exports.generate_mocker_data = function (req, res) {
         .schema('administrators', administrator, 25)
         .schema('sponsors', sponsor, 25)
         .schema('stages', stage, 300)
-        .schema('trips', trip, 50)
+        .schema('trips', trip, 5000)
         .schema('applications', application, 25)
         .schema('sponsorships', sponsorship, 25)
         .schema('finders', finder, 25)
