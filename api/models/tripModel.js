@@ -116,7 +116,7 @@ TripSchema.pre('save', function(callback) {
         day = '0' + day;
     var today_string = year + month + day;*/
     var random_generation = generate('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 4);
-    var random_generation2 = generate('0123456789',4);
+    var random_generation2 = generate('0123456789',6);
     new_trip.ticker = ""+random_generation2 + "-" + random_generation;
     callback();
   });
