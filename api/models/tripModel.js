@@ -104,8 +104,8 @@ TripSchema.index({price: 1});
 
 
 TripSchema.pre('save', function(callback) {
-    /*var new_trip = this;
-    var today = new Date();
+    var new_trip = this;
+    /*var today = new Date();
     var month = '' + (today.getMonth() + 1);
     var day = '' + today.getDate();
     var year = '' + today.getFullYear();
