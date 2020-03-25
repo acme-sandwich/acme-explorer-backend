@@ -1,4 +1,4 @@
-BASE_SITE=do1920.com
+BASE_SITE=ec2-3-87-56-71.compute-1.amazonaws.com
 
 #development
 export NODE_ENV=development

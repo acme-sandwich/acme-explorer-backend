@@ -7,7 +7,14 @@ var authController = require('./authController');
 
 /** Returns all published trips. */
 exports.list_all_trips = function (req, res) {
-	Trip.find({ published: true }, function (err, trips) {
+	const limit = parseInt(req.query.limit, 10) || 10;
+	let skip = parseInt(req.query.page, 10) || 0;
+	skip = skip * limit;
+	const pageOptions = {
+		skip: skip,
+		limit: limit
+	};
+	Trip.find({ published: true }, null, pageOptions, function (err, trips) {
 		if (err) {
 			res.send(err);
 		}
