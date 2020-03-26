@@ -16,13 +16,10 @@ var admin = require('firebase-admin');
 var serviceAccount = require("./acme-sandwich-explorer-firebase-adminsdk-9cn2y-a845a0ffa2");
 
 // MongoDB URI building
-const mongoDBHostname = process.env.mongoDBHostname || 'acme-explorer-xlwrw.mongodb.net';
 const mongoDBName = process.env.mongoDBName || 'ACME-Explorer';
-const mongoDBUser = process.env.mongoDBUser || 'db-user';
-const mongoDBPass = process.env.mongoDBPass || 'db-user';
-const mongoDBPort = process.env.mongoDBPort || "27017"; // Not used in Mongo Atlas
+const mongoDBPort = process.env.DBPORT || 27017; // Not used in Mongo Atlas
 
-mongoDBURI = `mongodb+srv://${mongoDBUser}:${mongoDBPass}@${mongoDBHostname}:/${mongoDBName}`;
+mongoDBURI = `mongodb://mongo:${mongoDBPort}/${mongoDBName}`;
 
 mongoose.connect(mongoDBURI, {
     reconnectTries: 10,

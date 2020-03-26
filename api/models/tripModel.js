@@ -105,7 +105,7 @@ TripSchema.index({price: 1});
 
 TripSchema.pre('save', function(callback) {
     var new_trip = this;
-    var today = new Date();
+    /*var today = new Date();
     var month = '' + (today.getMonth() + 1);
     var day = '' + today.getDate();
     var year = '' + today.getFullYear();
@@ -114,9 +114,10 @@ TripSchema.pre('save', function(callback) {
         month = '0' + month;
     if (day.length < 2) 
         day = '0' + day;
-    var today_string = year + month + day;
+    var today_string = year + month + day;*/
     var random_generation = generate('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 4);
-    new_trip.ticker = today_string + "-" + random_generation;
+    var random_generation2 = generate('0123456789',6);
+    new_trip.ticker = ""+random_generation2 + "-" + random_generation;
     callback();
   });
 
