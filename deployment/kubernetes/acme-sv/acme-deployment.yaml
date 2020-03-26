@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: acme-deployment
+  labels:
+    app: acme
+spec:
+  selector:
+    matchLabels:
+      app: acme
+  template:
+    metadata:
+      labels:
+        app: acme
+    spec:
+      containers:
+      - name: acme
+        image: raffrearaus/acme-explorer-backend
+        ports:
+        - containerPort: 8080
+          name: http-port
+        env:
+        - name: NODE_ENV
+          value: production
