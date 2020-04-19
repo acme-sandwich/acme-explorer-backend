@@ -205,7 +205,7 @@ exports.generate_mocker_data = function (req, res) {
             hasMany: 'pictures',
             min: 1,
             max: 5,
-            unique: true
+            unique: false
         },
         stages: {
             hasMany: 'stages',
@@ -417,16 +417,18 @@ exports.generate_mocker_data = function (req, res) {
         .schema('managers', manager, 25)
         .schema('administrators', administrator, 25)
         .schema('sponsors', sponsor, 25)
-        .schema('stages', stage, 30)
         .schema('pictures', picture, 25)
+        .schema('stages', stage, 25)
         .schema('trips', trip, 50)
         .schema('applications', application, 25)
         .schema('sponsorships', sponsorship, 25)
         .schema('finders', finder, 25)
         .build(function (err, data) {
             if (err) {
+                console.log(err);
                 res.send(err);
             } else {
+                console.log('Trying to create mock objects...');
                 var explorers = data.explorers;
                 var managers = data.managers;
                 var administrators = data.administrators;
