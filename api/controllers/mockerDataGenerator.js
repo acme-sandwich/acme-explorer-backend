@@ -501,6 +501,7 @@ exports.generate_mocker_data = function (req, res) {
                             console.error("Error when trying to save trip " + tr + ": " + err);
                         }
                         else {
+                            console.log(tr);
                             console.log("Trip properly created");
                         }
                     });
