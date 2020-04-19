@@ -19,8 +19,8 @@ var serviceAccount = require("./acme-sandwich-explorer-firebase-adminsdk-9cn2y-a
 const mongoDBName = process.env.mongoDBName || 'ACME-Explorer';
 const mongoDBPort = process.env.DBPORT || 27017; // Not used in Mongo Atlas
 
-//mongoDBURI = `mongodb://mongo:${mongoDBPort}/${mongoDBName}`;
-mongoDBURI = `mongodb+srv://antrodart-acme-explorer:antrodart-acme-explorer@cluster0-a3rhn.mongodb.net/test?retryWrites=true&w=majority`;
+mongoDBURI = `mongodb://mongo:${mongoDBPort}/${mongoDBName}`;
+//mongoDBURI = `mongodb+srv://antrodart-acme-explorer:antrodart-acme-explorer@cluster0-a3rhn.mongodb.net/test?retryWrites=true&w=majority`;
 
 mongoose.connect(mongoDBURI, {
     reconnectTries: 10,
