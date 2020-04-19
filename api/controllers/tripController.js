@@ -7,14 +7,23 @@ var authController = require('./authController');
 
 /** Returns all published trips. */
 exports.list_all_trips = function (req, res) {
-	const limit = parseInt(req.query.limit, 10) || 10;
+	let published = req.query.keyword;
+	if(published == null || published === ''){
+		published = true;
+	}
+	let keyword = req.query.keyword;
+	let regex = new RegExp(keyword, "i");
+	const limit = parseInt(req.query.pageSize, 10) || 10;
 	let skip = parseInt(req.query.page, 10) || 0;
 	skip = skip * limit;
 	const pageOptions = {
 		skip: skip,
 		limit: limit
 	};
-	Trip.find({ published: true }, null, pageOptions, function (err, trips) {
+	Trip.find({ 
+		published: published,
+		$or: [{ ticker: regex }, { title: regex }, { description: regex }] 
+	}, null, pageOptions, function (err, trips) {
 		if (err) {
 			res.send(err);
 		}
