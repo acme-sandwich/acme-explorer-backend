@@ -27,7 +27,7 @@ var StageSchema = new Schema({
 
 var PictureSchema = new Schema({
     data: {
-        type: Buffer
+        type: String
     },
     contentType: {
         type: String
