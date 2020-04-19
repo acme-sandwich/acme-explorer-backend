@@ -21,7 +21,7 @@ exports.list_all_trips = function (req, res) {
 		limit: limit
 	};
 	Trip.find({ 
-		published: published,
+		$or: [{published: true}, {published: published}],
 		$or: [{ ticker: regex }, { title: regex }, { description: regex }] 
 	}, null, pageOptions, function (err, trips) {
 		if (err) {
