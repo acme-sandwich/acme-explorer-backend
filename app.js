@@ -32,8 +32,6 @@ mongoose.connect(mongoDBURI, {
     useFindAndModify: false
 });
 
-mongoose.connection.db.executeDbCommand( {dropDatabase:1}, function(err, result) { if (err) { console.log(err); } done(); });
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
