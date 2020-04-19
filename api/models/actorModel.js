@@ -31,7 +31,7 @@ var ActorSchema = new Schema({
   role: [{
     type: String,
     required: 'Kindly enter the user role(s)',
-    enum: ['ADMINISTRATOR', 'MANAGER', 'EXPLORER', 'SPONSOR']
+    enum: ['ADMINISTRATOR', 'MANAGER', 'EXPLORER', 'SPONSOR', 'AUDITOR']
   }],
   banned: {
     type: Boolean,
