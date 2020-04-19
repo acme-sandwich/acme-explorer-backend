@@ -178,14 +178,14 @@ exports.generate_mocker_data = function (req, res) {
 
     var picture = {
         data: {
-            faker: 'image.imageUrl'
+             randexp: /(https:\/\/moneydotcomvip\.files\.wordpress\.com\/2017\/08\/route-66\.jpg|https:\/\/contactar-con\.com\/wp-content\/uploads\/2019\/05\/trip-700x400\.jpg|https:\/\/www\.moneycrashers\.com\/wp-content\/uploads\/2019\/04\/plan-road-trip-tips-ideas\.jpg|https:\/\/www\.65ymas\.com\/uploads\/s1\/10\/57\/8\/10-cosas-que-ver-en-lisboa\.jpeg)/
         },
         contentType: {
             function: function () {
                 return "image/jpeg";
             }
         }
-    }
+    };
 
     var trip = {
         _id: {
@@ -204,7 +204,7 @@ exports.generate_mocker_data = function (req, res) {
         picture: {
             hasMany: 'pictures',
             min: 1,
-            max: 3,
+            max: 5,
             unique: true
         },
         stages: {
@@ -417,9 +417,9 @@ exports.generate_mocker_data = function (req, res) {
         .schema('managers', manager, 25)
         .schema('administrators', administrator, 25)
         .schema('sponsors', sponsor, 25)
-        .schema('stages', stage, 300)
+        .schema('stages', stage, 30)
         .schema('pictures', picture, 25)
-        .schema('trips', trip, 5000)
+        .schema('trips', trip, 50)
         .schema('applications', application, 25)
         .schema('sponsorships', sponsorship, 25)
         .schema('finders', finder, 25)
