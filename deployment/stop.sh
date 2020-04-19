@@ -1,11 +1,11 @@
-BASE_SITE=ec2-3-87-56-71.compute-1.amazonaws.com
+BASE_SITE=ec2-184-72-144-64.compute-1.amazonaws.com
 
 #development
-export NODE_ENV=development
-export PORT=8001
-export DBPORT=27017
-export VIRTUAL_HOST=${NODE_ENV}.${BASE_SITE}
-docker-compose -p ${VIRTUAL_HOST} down
+#export NODE_ENV=development
+#export PORT=8001
+#export DBPORT=27017
+#export VIRTUAL_HOST=${NODE_ENV}.${BASE_SITE}
+#docker-compose -p ${VIRTUAL_HOST} down
 
 #production
 export NODE_ENV=production
