@@ -206,7 +206,7 @@ exports.generate_mocker_data = function (req, res) {
             faker: 'lorem.paragraph'
         },
         picture: {
-            hasMany: 'stages',
+            hasMany: 'pictures',
             min: 1,
             max: 5,
             unique: false
