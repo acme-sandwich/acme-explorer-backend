@@ -187,6 +187,10 @@ exports.generate_mocker_data = function (req, res) {
         }
     };
 
+    var requirement = {
+        randexp: /Requisito 1|Requisito 2|Requisito 3|Requisito 4|Requisito 5/
+    }
+
     var trip = {
         _id: {
             function: function () {
@@ -202,7 +206,7 @@ exports.generate_mocker_data = function (req, res) {
             faker: 'lorem.paragraph'
         },
         picture: {
-            hasMany: 'pictures',
+            hasMany: 'stages',
             min: 1,
             max: 5,
             unique: false
@@ -226,7 +230,10 @@ exports.generate_mocker_data = function (req, res) {
             }
         },
         requirements: {
-            faker: 'lorem.paragraph'
+            hasMany: 'requirements',
+            min: 1,
+            max: 4,
+            unique: false
         },
         startDate: {
             function: function () {
@@ -418,6 +425,7 @@ exports.generate_mocker_data = function (req, res) {
         .schema('administrators', administrator, 25)
         .schema('sponsors', sponsor, 25)
         .schema('pictures', picture, 25)
+        .schema('requirements', requirement, 15)
         .schema('stages', stage, 25)
         .schema('trips', trip, 50)
         .schema('applications', application, 25)

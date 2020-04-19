@@ -59,10 +59,7 @@ var TripSchema = new Schema({
         type: Number,
         min: 0
     },
-    requirements: {
-        type: String,
-        required: 'Kindly enter the requirements'
-    },
+    requirements: [String],
     startDate: {
         type: Date,
         required: 'Kindly enter the start date'
