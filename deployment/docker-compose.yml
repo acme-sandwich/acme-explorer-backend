@@ -24,7 +24,7 @@ services:
       - "${DBPORT}"
     command: --logpath /var/log/mongodb/mongodb.log --port ${DBPORT}
     volumes:
-      - "dbdata:/data/db3"
+      - "dbdata:/data/db4"
       - "logsvol:/var/log/mongodb"
 
 volumes:
