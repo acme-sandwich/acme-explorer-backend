@@ -176,6 +176,17 @@ exports.generate_mocker_data = function (req, res) {
         }
     };
 
+    var picture = {
+        data: {
+            faker: 'image.imageUrl'
+        },
+        contentType: {
+            function: function () {
+                return "image/jpeg";
+            }
+        }
+    }
+
     var trip = {
         _id: {
             function: function () {
@@ -190,19 +201,12 @@ exports.generate_mocker_data = function (req, res) {
         description: {
             faker: 'lorem.paragraph'
         },
-        picture: [
-            {
-                function: function () {
-                    var json_object = {
-                        "data": "https://moneydotcomvip.files.wordpress.com/2017/08/route-66.jpg",
-                        "contentType": "image/jpeg"
-                    }
-                    return json_object;
-                },
-                length: 3,
-                fixedLength: false
-            }
-        ],
+        picture: {
+            hasMany: 'pictures',
+            min: 1,
+            max: 3,
+            unique: true
+        },
         stages: {
             hasMany: 'stages',
             min: 1,
@@ -414,6 +418,7 @@ exports.generate_mocker_data = function (req, res) {
         .schema('administrators', administrator, 25)
         .schema('sponsors', sponsor, 25)
         .schema('stages', stage, 300)
+        .schema('pictures', picture, 25)
         .schema('trips', trip, 5000)
         .schema('applications', application, 25)
         .schema('sponsorships', sponsorship, 25)
