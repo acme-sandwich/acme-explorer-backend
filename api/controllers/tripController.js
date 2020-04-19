@@ -7,7 +7,7 @@ var authController = require('./authController');
 
 /** Returns all published trips. */
 exports.list_all_trips = function (req, res) {
-	let published = req.query.keyword;
+	let published = req.query.published;
 	if(published == null || published === ''){
 		published = true;
 	}
