@@ -1,4 +1,4 @@
-BASE_SITE=ec2-184-72-144-64.compute-1.amazonaws.com
+BASE_SITE=ec2-54-86-160-95.compute-1.amazonaws.com
 
 #development
 #export NODE_ENV=development
