@@ -4,7 +4,7 @@ module.exports = function(app) {
   var authController = require('../controllers/authController');
 
   app.route('/api/v1/applications')
-    .get(authController.verifyUser(["MANAGER"]), applications.list_all_applications_all_trips);
+    .get(applications.list_all_applications_all_trips);
 
   app.route('/api/v1/my-applications')
 	  .get(applications.list_all_applications)
