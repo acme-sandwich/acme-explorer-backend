@@ -8,6 +8,7 @@ var authController = require('./authController');
 /** Returns all published trips. */
 exports.list_all_trips = function (req, res) {
 	let published = req.query.published;
+	let creator = req.query.creator;
 	if(published == null || published === '' || published === '1' || published === 'true'){
 		published = true;
 	}else{
@@ -22,7 +23,19 @@ exports.list_all_trips = function (req, res) {
 		skip: skip,
 		limit: limit
 	};
-	if(published) {
+	if(creator != null && creator !== ''){
+		Trip.find({ 
+			creator: creator,
+			$or: [{ ticker: regex }, { title: regex }, { description: regex }] 
+		}, null, pageOptions, function (err, trips) {
+			if (err) {
+				res.send(err);
+			}
+			else {
+				res.json(trips);
+			}
+		});
+	}else if(published) {
 		Trip.find({ 
 			published: true,
 			$or: [{ ticker: regex }, { title: regex }, { description: regex }] 
