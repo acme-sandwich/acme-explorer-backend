@@ -3,8 +3,11 @@ module.exports = function(app) {
   var sponsorships = require('../controllers/sponsorshipController');
   var authController = require('../controllers/authController');
 
+  app.route('/api/v1/sponsorships')
+    .get(sponsorships.list_all_sponsorships);
+
   app.route('/api/v1/actors/:actorId/sponsorships')
-	  .get(sponsorships.list_all_sponsorships)
+	  .get(sponsorships.list_my_sponsorships)
     .post(sponsorships.create_a_sponsorship);
     
   app.route('/api/v2/sponsorships')
