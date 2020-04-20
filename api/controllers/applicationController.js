@@ -37,8 +37,9 @@ exports.list_all_applications_v2 = async function (req, res) {
 };
 
 exports.list_all_applications_all_trips = async function (req, res) {
-  var idToken = req.headers['idtoken'];
-  var authenticatedUserId = await authController.getUserId(idToken);
+  /*var idToken = req.headers['idtoken'];
+  var authenticatedUserId = await authController.getUserId(idToken);*/
+  var authenticatedUserId = req.query.manager;
   Trip.find({ creator: authenticatedUserId }, function (error, trips) {
     var tripsIds = [];
     for (var i = 0; i < trips.length; i++) {
@@ -56,8 +57,9 @@ exports.list_all_applications_all_trips = async function (req, res) {
 };
 
 exports.list_my_applications = async function (req, res) {
-  var idToken = req.headers['idtoken'];
-  var authenticatedUserId = await authController.getUserId(idToken);
+  /*var idToken = req.headers['idtoken'];
+  var authenticatedUserId = await authController.getUserId(idToken);*/
+  var authenticatedUserId = req.query.explorer;
   Application.find({explorer: authenticatedUserId}, function(err, applications){
     if(err){
       res.send(err);
