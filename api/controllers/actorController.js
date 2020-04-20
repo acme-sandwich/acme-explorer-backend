@@ -6,14 +6,26 @@ var admin = require('firebase-admin');
 var authController = require('./authController');
 
 exports.list_all_actors = function (req, res) {
-  Actor.find({}, function (err, actors) {
-    if (err) {
-      res.send(err);
-    }
-    else {
-      res.json(actors);
-    }
-  });
+  let email = req.query.email;
+  if(!email || email === ''){
+    Actor.find({}, function (err, actors) {
+      if (err) {
+        res.send(err);
+      }
+      else {
+        res.json(actors);
+      }
+    });
+  }else{
+    Actor.find({email: email}, function (err, actors) {
+      if (err) {
+        res.send(err);
+      }
+      else {
+        res.json(actors);
+      }
+    });
+  }
 };
 
 exports.create_an_actor = function (req, res) {
