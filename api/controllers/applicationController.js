@@ -59,14 +59,25 @@ exports.list_all_applications_all_trips = async function (req, res) {
 exports.list_my_applications = async function (req, res) {
   /*var idToken = req.headers['idtoken'];
   var authenticatedUserId = await authController.getUserId(idToken);*/
-  var authenticatedUserId = req.query.explorer;
-  Application.find({explorer: authenticatedUserId}, function(err, applications){
-    if(err){
-      res.send(err);
-    }else{
-      res.json(applications);
-    }
-  })
+  var explorer = req.query.explorer;
+  var manager = req.query.manager;
+  if(explorer != null && explorer !== ''){
+    Application.find({explorer: explorer}, function(err, applications){
+      if(err){
+        res.send(err);
+      }else{
+        res.json(applications);
+      }
+    })
+  }else{
+    Application.find({manager: manager}, function(err, applications){
+      if(err){
+        res.send(err);
+      }else{
+        res.json(applications);
+      }
+    })
+  }
 };
 
 exports.create_an_application = function (req, res) {

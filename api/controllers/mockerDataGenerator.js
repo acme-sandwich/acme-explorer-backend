@@ -332,6 +332,10 @@ exports.generate_mocker_data = function (req, res) {
             hasOne: 'explorers',
             get: '_id'
         },
+        manager: {
+            hasOne: 'managers',
+            get: '_id'
+        },
         moment: {
             function: function () {
                 return this.faker.date.between("2019-12-30", "2020-02-01");

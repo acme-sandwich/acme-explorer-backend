@@ -30,12 +30,17 @@ var ApplicationSchema = new Schema({
   explorer: {
     type: Schema.Types.ObjectId,
     ref: 'Actors'
+  },
+  manager: {
+    type: Schema.Types.ObjectId,
+    ref: 'Actors'
   }
 }, { strict: false });
 
 ApplicationSchema.index({moment: 1});
 ApplicationSchema.index({trip: 1})
 ApplicationSchema.index({explorer: 1});
+ApplicationSchema.index({manager: 1});
 ApplicationSchema.index({explorer: 1, status: 'text'});
 
 function dateValidator(value){
