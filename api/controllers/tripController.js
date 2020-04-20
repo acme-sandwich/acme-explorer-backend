@@ -20,17 +20,30 @@ exports.list_all_trips = function (req, res) {
 		skip: skip,
 		limit: limit
 	};
-	Trip.find({ 
-		$or: [{published: true}, {published: published}],
-		$or: [{ ticker: regex }, { title: regex }, { description: regex }] 
-	}, null, pageOptions, function (err, trips) {
-		if (err) {
-			res.send(err);
-		}
-		else {
-			res.json(trips);
-		}
-	});
+	if(published) {
+		Trip.find({ 
+			published: true,
+			$or: [{ ticker: regex }, { title: regex }, { description: regex }] 
+		}, null, pageOptions, function (err, trips) {
+			if (err) {
+				res.send(err);
+			}
+			else {
+				res.json(trips);
+			}
+		});
+	}else{
+		Trip.find({ 
+			$or: [{ ticker: regex }, { title: regex }, { description: regex }] 
+		}, null, pageOptions, function (err, trips) {
+			if (err) {
+				res.send(err);
+			}
+			else {
+				res.json(trips);
+			}
+		});
+	}
 };
 
 /** Returns all trips created by the user, sorted by creation date.
