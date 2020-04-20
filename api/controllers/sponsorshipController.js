@@ -34,10 +34,9 @@ exports.list_trip_sponsorships = function (req, res) {
   });
 }
 
-exports.list_my_sponsorships = async function (req, res) {
-  var idToken = req.headers['idtoken'];
-  var authenticatedUserId = await authController.getUserId(idToken);
-  Sponsorship.find({sponsor: authenticatedUserId}, function (err, sponsorships) {
+exports.list_my_sponsorships = function (req, res) {
+  var idSponsor = req.params.actorId;
+  Sponsorship.find({sponsor: idSponsor}, function (err, sponsorships) {
     if (err) {
       res.send(err);
     }
