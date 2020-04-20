@@ -6,6 +6,7 @@ var ActorModel = mongoose.model('Actors');
 var TripModel = mongoose.model('Trips');
 var ApplicationModel = mongoose.model('Applications');
 var SponsorshipModel = mongoose.model('Sponsorships');
+var AuditModel = mongoose.model('Audits');
 var FinderModel = mongoose.model('Finders');
 
 
@@ -153,6 +154,44 @@ exports.generate_mocker_data = function (req, res) {
         role: {
             function: function () {
                 return "SPONSOR";
+            }
+        },
+        banned: {
+            function: function () {
+                return false;
+            }
+        }
+    };
+
+    var auditor = {
+        _id: {
+            function: function () {
+                return mongoose.Types.ObjectId();
+            }
+        },
+        name: {
+            faker: 'name.firstName'
+        },
+        surname: {
+            faker: 'name.lastName'
+        },
+        email: {
+            faker: 'internet.email'
+        },
+        password: {
+            function: function () {
+                return "password1234";
+            }
+        },
+        phone: {
+            faker: 'phone.phoneNumber'
+        },
+        address: {
+            faker: 'address.streetAddress'
+        },
+        role: {
+            function: function () {
+                return "AUDITOR";
             }
         },
         banned: {
@@ -347,6 +386,41 @@ exports.generate_mocker_data = function (req, res) {
         }
     };
 
+    var attachment = {
+        randexp: /Attachment 1|Attachment 2|Attachment 3|Attachment 4|Attachment 5/
+    };
+
+    var audit = {
+        auditor: {
+            hasOne: 'auditors',
+            get: '_id'
+        },
+        trip: {
+            hasOne: 'trips',
+            get: '_id'
+        },
+        title: {
+            function: function () {
+                return this.faker.commerce.product() + ' audit';
+            }
+        },
+        description: {
+            faker: 'lorem.paragraph'
+        },
+        attachments: {
+            hasMany: 'attachments',
+            min: 1,
+            max: 4,
+            unique: false
+        },
+        moment: {
+            function: function () {
+                var date = this.faker.date.between("2020-03-20", "2020-04-10");
+                return date;
+            }
+        }
+    };
+
     var finder = {
         explorer: {
             hasOne: 'explorers',
@@ -424,12 +498,15 @@ exports.generate_mocker_data = function (req, res) {
         .schema('managers', manager, 25)
         .schema('administrators', administrator, 25)
         .schema('sponsors', sponsor, 25)
+        .schema('auditors', auditor, 25)
         .schema('pictures', picture, 25)
         .schema('requirements', requirement, 15)
         .schema('stages', stage, 25)
         .schema('trips', trip, 50)
         .schema('applications', application, 25)
         .schema('sponsorships', sponsorship, 25)
+        .schema('attachments', attachment, 15)
+        .schema('audits', audit, 25)
         .schema('finders', finder, 25)
         .build(function (err, data) {
             if (err) {
@@ -441,9 +518,11 @@ exports.generate_mocker_data = function (req, res) {
                 var managers = data.managers;
                 var administrators = data.administrators;
                 var sponsors = data.sponsors;
+                var auditors = data.auditors;
                 var trips = data.trips;
                 var applications = data.applications;
                 var sponsorships = data.sponsorships;
+                var audits = data.audits;
                 var finders = data.finders;
 
                 for (var i = 0; i < explorers.length; i++) {
@@ -494,6 +573,18 @@ exports.generate_mocker_data = function (req, res) {
                     });
                 }
 
+                for (var i = 0; i < auditors.length; i++) {
+                    var new_auditor = new ActorModel(auditors[i]);
+                    new_auditor.save(function (err, aud) {
+                        if (err) {
+                            console.error("Error when trying to save auditor " + aud + ": " + err);
+                        }
+                        else {
+                            console.log("Auditor properly created");
+                        }
+                    });
+                }
+
                 for (var i = 0; i < trips.length; i++) {
                     var new_trip = new TripModel(trips[i]);
                     new_trip.save(function (err, tr) {
@@ -527,6 +618,18 @@ exports.generate_mocker_data = function (req, res) {
                         }
                         else {
                             console.log("Sponsorship properly created");
+                        }
+                    });
+                }
+
+                for (var i = 0; i < audits.length; i++) {
+                    var new_audit = new AuditModel(audits[i]);
+                    new_audit.save(function (err, audt) {
+                        if (err) {
+                            console.error("Error when trying to save audit " + audt + ": " + err);
+                        }
+                        else {
+                            console.log("Audit properly created");
                         }
                     });
                 }

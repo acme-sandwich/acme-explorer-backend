@@ -5,6 +5,7 @@ var express = require('express'),
   Actor = require('./api/models/actorModel'),
   Finder = require('./api/models/finderModel'),
   Sponsorship = require('./api/models/sponsorshipModel'),
+  Audits = require('./api/models/auditModel'),
   Trip = require('./api/models/tripModel'),
   Application = require('./api/models/applicationModel'),
   Configuration = require('./api/models/configurationModel'),
@@ -56,6 +57,7 @@ var routesActors = require('./api/routes/actorRoutes');
 var routesTrips = require('./api/routes/tripRoutes'); 
 var routesFinder = require('./api/routes/finderRoutes');
 var routesSponsorship = require('./api/routes/sponsorshipRoutes');
+var routesAudits = require('./api/routes/auditRoutes');
 var routesApplications = require('./api/routes/applicationRoutes');
 var routesConfigurations = require('./api/routes/configurationRoutes');
 var routesStorage = require('./api/routes/storageRoutes');
@@ -67,6 +69,7 @@ routesActors(app);
 routesTrips(app);
 routesFinder(app);
 routesSponsorship(app);
+routesAudits(app);
 routesApplications(app);
 routesConfigurations(app);
 routesStorage(app);
