@@ -8,8 +8,10 @@ var authController = require('./authController');
 /** Returns all published trips. */
 exports.list_all_trips = function (req, res) {
 	let published = req.query.published;
-	if(published == null || published === ''){
+	if(published == null || published === '' || published === '1' || published === 'true'){
 		published = true;
+	}else{
+		published = false;
 	}
 	let keyword = req.query.keyword;
 	let regex = new RegExp(keyword, "i");
