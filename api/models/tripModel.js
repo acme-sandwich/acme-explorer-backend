@@ -34,6 +34,15 @@ var PictureSchema = new Schema({
     } 
 }, { strict: false });
 
+var PhotoSchema = new Schema({
+    Buffer: {
+        type: String
+    },
+    contentType: {
+        type: String
+    }
+}, { strict: false })
+
 var TripSchema = new Schema({
     ticker: { // Required but created automatically.
         type: String,
@@ -69,6 +78,7 @@ var TripSchema = new Schema({
         required: [dateValidator, 'Start Date must be less or equal than End Date']
     },
     picture: [PictureSchema],
+    photoObject: PhotoSchema,
     published: {
         type: Boolean,
         default: false
@@ -108,19 +118,15 @@ TripSchema.index({ price: 1 });
 
 TripSchema.pre('save', function (callback) {
     var new_trip = this;
-    /*var today = new Date();
-    var month = '' + (today.getMonth() + 1);
-    var day = '' + today.getDate();
-    var year = '' + today.getFullYear();
-    year = year.slice(-2);
-    if (month.length < 2) 
-        month = '0' + month;
-    if (day.length < 2) 
-        day = '0' + day;
-    var today_string = year + month + day;*/
+    var stages = new_trip.stages;
+    var price = 0;
+    for(var i = 0; i < stages.length; i++) {
+        price = price + stages[i].price;
+    }
     var random_generation = generate('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 4);
     var random_generation2 = generate('0123456789', 6);
     new_trip.ticker = "" + random_generation2 + "-" + random_generation;
+    new_trip.price = price;
     callback();
 });
 
