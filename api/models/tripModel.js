@@ -77,7 +77,6 @@ var TripSchema = new Schema({
         type: Date,
         required: [dateValidator, 'Start Date must be less or equal than End Date']
     },
-    picture: [PictureSchema],
     photoObject: PhotoSchema,
     published: {
         type: Boolean,
