@@ -289,7 +289,7 @@ exports.cancel_a_trip = function (req, res) {
 					else if (applications.length > 0) {
 						res.status(409).send('Cannot cancel a trip that has accepted applications');
 					} else {
-						var cancelledJson = { 'cancelled': true, 'reason': req.body.reason };
+						var cancelledJson = { 'cancelled': true, 'cancelledReason': req.body.reason };
 						Trip.findOneAndUpdate({ _id: req.params.tripId }, cancelledJson, { new: true }, function (err, trip) {
 							if (err) {
 								res.send(err);
