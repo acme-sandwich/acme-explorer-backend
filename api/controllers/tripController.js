@@ -144,16 +144,13 @@ exports.update_a_trip = function (req, res) {
 
 exports.add_picture_to_trip = function (req, res) {
 	const tripId = req.params.tripId;
-	const newPhoto = req.params.body;
+	const newPhoto = req.body;
 	const newPhotoJson = JSON.parse(newPhoto);
 	Trip.findById(tripId, function (err, trip) {
 		if (err) res.send(err);
 		else if (trip == null) res.status(404).send("Trip not found");
 		else {
-			let tripPhotos = trip.photoObject;
-			tripPhotos.push(newPhotoJson);
-			trip.photoObject = tripPhotos;
-			Trip.findOneAndUpdate({ _id: tripId }, trip, { new: true }, function (err, tripUpdated) {
+			Trip.findOneAndUpdate({ _id: tripId }, {$push: {photoObject: newPhotoJson}}, { new: true }, function (err, tripUpdated) {
 				if (err) {
 					res.send(err);
 				}
