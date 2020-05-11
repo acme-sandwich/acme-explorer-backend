@@ -142,6 +142,50 @@ exports.update_a_trip = function (req, res) {
 	});
 };
 
+exports.add_picture_to_trip = function (req, res) {
+	const tripId = req.params.tripId;
+	const newPhoto = req.params.body;
+	Trip.findById(tripId, function (err, trip) {
+		if (err) res.send(err);
+		else if (trip == null) res.status(404).send("Trip not found");
+		else {
+			let tripPhotos = trip.photoObject;
+			tripPhotos.push(newPhoto);
+			trip.photoObject = tripPhotos;
+			Trip.findOneAndUpdate({ _id: tripId }, trip, { new: true }, function (err, tripUpdated) {
+				if (err) {
+					res.send(err);
+				}
+				else {
+					res.json(tripUpdated);
+				}
+			});
+		}
+	});
+}
+
+exports.delete_picture_from_trip = function (req, res) {
+	const tripId = req.params.tripId;
+	const photoIndex = req.query.photoIndex;
+	Trip.findById(tripId, function (err, trip) {
+		if (err) res.send(err);
+		else if (trip == null) res.status(404).send("Trip not found");
+		else {
+			let tripPhotos = trip.photoObject;
+			tripPhotos.splice(photoIndex, 1); // Eliminamos la imagen de la colección de imágenes a partir de su índice
+			trip.photoObject = tripPhotos;
+			Trip.findOneAndUpdate({ _id: tripId }, trip, { new: true }, function (err, tripUpdated) {
+				if (err) {
+					res.send(err);
+				}
+				else {
+					res.json(tripUpdated);
+				}
+			});
+		}
+	});
+}
+
 exports.update_a_trip_v2 = async function (req, res) {
 	Trip.findById(req.params.tripId, async function (err, trip) {
 		if (err) {

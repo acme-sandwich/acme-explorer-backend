@@ -24,6 +24,10 @@ module.exports = function (app) {
         .put(trips.update_a_trip)
         .delete(trips.delete_a_trip);
 
+    app.route('/api/v1/trips/:tripId/photos')
+        .put(trips.add_picture_to_trip)
+        .delete(trips.delete_picture_from_trip);
+
     app.route('/api/v2/trips/:tripId')
         .put(authController.verifyUser(["MANAGER"]),trips.update_a_trip_v2)
         .delete(authController.verifyUser(["MANAGER"]),trips.delete_a_trip_v2);
