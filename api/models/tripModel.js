@@ -105,6 +105,14 @@ var TripSchema = new Schema({
     deleted: {
         type: Boolean,
         default: false
+    },
+    latitude: {
+        type: Number,
+        default: 0
+    },
+    longitude: {
+        type: Number,
+        default: 0
     }
 }, { strict: false });
 
