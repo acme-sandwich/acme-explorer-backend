@@ -108,11 +108,11 @@ var TripSchema = new Schema({
     },
     latitude: {
         type: Number,
-        default: 0
+        required: false
     },
     longitude: {
         type: Number,
-        default: 0
+        required: false
     }
 }, { strict: false });
 
